@@ -22,15 +22,25 @@ jobs:
             cd /opt/ticketeira/frontend-ticketeira
             git pull origin main
             
-            # Fazendo o build da nova versão do frontend
-            docker-compose build frontend
+            echo "📦 Removendo containers e imagens antigas"
+            docker-compose rm -f frontend
+            docker-compose down frontend
             
-            # Parando o container antigo antes de subir o novo
-            docker-compose stop frontend
+            echo "🏗️ Construindo nova imagem"
+            docker-compose build --no-cache frontend
             
-            # Subindo o novo container
+            echo "🚀 Iniciando novo container"
             docker-compose up -d frontend
             
-            # Removendo imagens antigas não utilizadas (opcional)
+            echo "⏳ Aguardando inicialização (30s)"
+            sleep 30
+            
+            echo "🔍 Verificando status do container"
+            docker-compose ps frontend
+            
+            echo "📝 Verificando logs do container"
+            docker-compose logs --tail=50 frontend
+            
+            echo "🧹 Limpando imagens não utilizadas"
             docker image prune -f
           ENDSSH
