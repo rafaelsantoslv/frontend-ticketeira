@@ -15,11 +15,22 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Deploy via SSH
+      - name: Deploy Frontend via SSH
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << 'ENDSSH'
-            cd /opt/ticketeira
+            echo "🔁 Iniciando deploy do frontend"
+            cd /opt/ticketeira/frontend-ticketeira
             git pull origin main
-            docker-compose down
-            docker-compose up -d --build
+            
+            # Fazendo o build da nova versão do frontend
+            docker-compose build frontend
+            
+            # Parando o container antigo antes de subir o novo
+            docker-compose stop frontend
+            
+            # Subindo o novo container
+            docker-compose up -d frontend
+            
+            # Removendo imagens antigas não utilizadas (opcional)
+            docker image prune -f
           ENDSSH
