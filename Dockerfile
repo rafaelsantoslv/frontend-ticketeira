@@ -1,5 +1,6 @@
 # Use a Node.js base image
 FROM node:18-alpine AS base
+RUN npm install -g pnpm
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -7,7 +8,6 @@ WORKDIR /app
 
 # Copy package.json and install dependencies
 COPY package.json package-lock.json* ./
-RUN npm install pnpm -g
 RUN pnpm install
 
 # Rebuild the source code only when needed
