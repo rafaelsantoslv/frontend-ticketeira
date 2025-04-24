@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+  backend:
+    build: ./backend-ticketeira
+    container_name: backend
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    depends_on:
+      - db
+  frontend:
+    build: ./frontend-ticketeira
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://34.16.30.144:8080
+    depends_on:
+      - backend
+  db:
+    image: postgres:15
+    container_name: postgres
+    restart: always
+    ports:
+      - "5432:5432"  # Porta padrão do PostgreSQL
+    environment:
+      POSTGRES_USER: ticketeira
+      POSTGRES_PASSWORD: 123321
+      POSTGRES_DB: db_ticketeira
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  nginx:
+      image: nginx:latest
+      container_name: nginx
+      ports:
+        - "80:80"
+        - "443:443"
+      volumes:
+        - ./nginx/conf.d:/etc/nginx/conf.d
+        - ./nginx/certs:/etc/nginx/certs
+      depends_on:
+        - frontend
+        - backend
+
+
+
+
+volumes:
+  postgres_data:
+    driver: loca
