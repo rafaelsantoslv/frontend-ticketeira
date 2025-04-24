@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { ArrowLeft, X } from "lucide-react"
+import { ArrowLeft, CalendarSearch, Columns2, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { usePathname } from "next/navigation"
 
@@ -9,7 +9,12 @@ export default function Sidebar() {
   const pathname = usePathname()
 
   const isActive = (path: string) => {
-    return pathname === path
+    // Se for exatamente o caminho /painel, só retorna true se for exatamente igual
+    if (path === '/painel') {
+      return pathname === '/painel'
+    }
+    // Para os outros caminhos, verifica se é exatamente igual ou se começa com o path
+    return pathname === path || pathname.startsWith(`${path}/`)
   }
 
   return (
@@ -26,19 +31,26 @@ export default function Sidebar() {
         </Button>
       </div>
 
-      <div className="p-4">
-        <Button variant="outline" className="w-full text-white border-white flex items-center justify-between">
-          <div className="flex items-center">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            <span>Alterar para painel A&B (bar)</span>
-          </div>
-        </Button>
-      </div>
-
       <div className="mt-4">
         <Link href="/" className="flex items-center px-4 py-3 text-white hover:bg-[#5a105b]">
           <ArrowLeft className="h-5 w-5 mr-3" />
           <span>Voltar</span>
+        </Link>
+
+        <Link
+          href="/painel"
+          className={`flex items-center px-4 py-3 text-white ${isActive("/painel") ? "bg-[#DC9188]" : "hover:bg-[#5a105b]"}`}
+        >
+          <Columns2 className="h-5 w-5 mr-3" />
+          <span>Painel</span>
+        </Link>
+
+        <Link
+          href="/painel/eventos"
+          className={`flex items-center px-4 py-3 text-white ${isActive("/painel/eventos") ? "bg-[#DC9188]" : "hover:bg-[#5a105b]"}`}
+        >
+          <CalendarSearch className="h-5 w-5 mr-3" />
+          <span>Eventos</span>
         </Link>
 
         <Link

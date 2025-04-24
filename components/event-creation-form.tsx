@@ -2,12 +2,12 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { ImageIcon, Upload } from "lucide-react"
-import { parse, isValid } from "date-fns"
+import { parse, isValid, format } from "date-fns"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -69,9 +69,10 @@ type EventCreationFormProps = {
   isOpen: boolean
   onClose: () => void
   onSubmit: (data: any) => void
+  initialData?: any // Adicionado para suportar edição
 }
 
-export default function EventCreationForm({ isOpen, onClose, onSubmit }: EventCreationFormProps) {
+export default function EventCreationForm({ isOpen, onClose, onSubmit, initialData }: EventCreationFormProps) {
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [coverImagePreview, setCoverImagePreview] = useState<string | null>(null)
 
@@ -90,6 +91,38 @@ export default function EventCreationForm({ isOpen, onClose, onSubmit }: EventCr
       coverImage: "",
     },
   })
+
+  // Preencher o formulário com dados iniciais quando disponíveis
+  useEffect(() => {
+    if (initialData) {
+      // Converter a data para o formato DD/MM/YYYY
+      const dateString =
+        initialData.date instanceof Date
+          ? format(initialData.date, "dd/MM/yyyy")
+          : format(new Date(initialData.date), "dd/MM/yyyy")
+
+      form.reset({
+        title: initialData.title || "",
+        dateString: dateString,
+        time: initialData.time || "19:00",
+        venueName: initialData.venueName || "",
+        address: initialData.address || "",
+        ageRating: initialData.ageRating || "",
+        category: initialData.category || "",
+        about: initialData.about || "",
+        image: initialData.image || "",
+        coverImage: initialData.coverImage || "",
+      })
+
+      if (initialData.image) {
+        setImagePreview(initialData.image)
+      }
+
+      if (initialData.coverImage) {
+        setCoverImagePreview(initialData.coverImage)
+      }
+    }
+  }, [initialData, form])
 
   function handleSubmit(values: z.infer<typeof formSchema>) {
     // Convert the date string to a Date object
@@ -131,8 +164,12 @@ export default function EventCreationForm({ isOpen, onClose, onSubmit }: EventCr
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Criar Novo Evento</DialogTitle>
-          <DialogDescription>Preencha as informações abaixo para criar um novo evento.</DialogDescription>
+          <DialogTitle>{initialData ? "Editar Evento" : "Criar Novo Evento"}</DialogTitle>
+          <DialogDescription>
+            {initialData
+              ? "Atualize as informações do evento abaixo."
+              : "Preencha as informações abaixo para criar um novo evento."}
+          </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
@@ -377,8 +414,8 @@ export default function EventCreationForm({ isOpen, onClose, onSubmit }: EventCr
               <Button type="button" variant="outline" onClick={onClose}>
                 Cancelar
               </Button>
-              <Button type="submit" className="bg-[#8e44ad] hover:bg-[#9b59b6]">
-                Criar Evento
+              <Button type="submit" className="bg-[#400041] hover:bg-[#5a105b]">
+                {initialData ? "Salvar Alterações" : "Criar Evento"}
               </Button>
             </DialogFooter>
           </form>
