@@ -53,25 +53,9 @@ export default function Sidebar() {
           <span>Eventos</span>
         </Link>
 
-        <Link
-          href="/painel/dashboard"
-          className={`flex items-center px-4 py-3 text-white ${isActive("/painel/dashboard") ? "bg-[#DC9188]" : "hover:bg-[#5a105b]"}`}
-        >
-          <div className="h-5 w-5 mr-3 flex items-center justify-center">
-            <span className="h-3 w-3 rounded-full border-2 border-white"></span>
-          </div>
-          <span>Dashboard</span>
-        </Link>
 
-        <Link
-          href="/painel/informacoes"
-          className={`flex items-center px-4 py-3 text-white ${isActive("/painel/informacoes") ? "bg-[#DC9188]" : "hover:bg-[#5a105b]"}`}
-        >
-          <div className="h-5 w-5 mr-3 flex items-center justify-center">
-            <div className="h-3 w-3 border-2 border-white"></div>
-          </div>
-          <span>Informações do Evento</span>
-        </Link>
+
+
       </div>
     </div>
   )
