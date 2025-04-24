@@ -8,9 +8,9 @@ import { Toaster } from "@/components/ui/toaster"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Uniticket - Plataforma de Venda de Ingressos",
+  title: "unyx ticket - Plataforma de Venda de Ingressos",
   description: "Gerencie eventos, venda ingressos e acompanhe resultados em tempo real",
-    generator: 'v0.dev'
+  generator: 'v0.dev'
 }
 
 export default function RootLayout({
