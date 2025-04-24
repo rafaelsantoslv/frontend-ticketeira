@@ -11,13 +11,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { toast } from "@/components/ui/use-toast"
 import { ToastAction } from "@/components/ui/toast"
 import { useAuth } from "@/contexts/auth-context"
+import Link from "next/link"
 
 export default function Header() {
   const router = useRouter()
+  const pathname = usePathname()
   const { logout, user } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
 
@@ -46,13 +48,62 @@ export default function Header() {
     return user.email.substring(0, 2).toUpperCase()
   }
 
+  // Gerar o breadcrumb com base no pathname
+  const generateBreadcrumb = () => {
+    const paths = pathname.split("/").filter(Boolean)
+
+    // Se não estiver no painel, não mostra breadcrumb
+    if (paths[0] !== "painel") return null
+
+    // Estrutura de breadcrumb
+    const breadcrumbs = []
+
+    // Adiciona "PAINEL" como primeiro item
+    breadcrumbs.push(
+      <Link href="/painel" key="painel" className="hover:text-[#400041]">
+        PAINEL
+      </Link>,
+    )
+
+    // Se tiver mais níveis, adiciona-os
+    if (paths.length > 1) {
+      if (paths[1] === "dashboard") {
+        breadcrumbs.push(<span key="dashboard">DASHBOARD</span>)
+      } else if (paths[1] === "eventos") {
+        breadcrumbs.push(
+          <Link href="/painel/eventos" key="eventos" className="hover:text-[#400041]">
+            EVENTOS
+          </Link>,
+        )
+
+        // Se for um evento específico
+        if (paths.length > 2 && paths[2] !== "novo") {
+          // Aqui você poderia buscar o nome do evento com base no ID
+          // Por enquanto, vamos usar um nome genérico ou o ID
+          const eventName = paths[2] === "1" ? "LA VIE GLOW PARTY" : `EVENTO ${paths[2]}`
+          breadcrumbs.push(<span key="evento-nome">{eventName}</span>)
+        } else if (paths[2] === "novo") {
+          breadcrumbs.push(<span key="novo-evento">NOVO EVENTO</span>)
+        }
+      }
+    }
+
+    // Retorna os breadcrumbs separados por "/"
+    return breadcrumbs.map((crumb, index) => {
+      // Adiciona separador entre os itens, exceto no último
+      return index < breadcrumbs.length - 1 ? (
+        <span key={`crumb-${index}`}>
+          {crumb} <span className="mx-2 text-gray-400">/</span>
+        </span>
+      ) : (
+        <span key={`crumb-${index}`}>{crumb}</span>
+      )
+    })
+  }
+
   return (
     <div className="bg-white p-4 flex items-center justify-between border-b">
-      <div className="text-sm text-gray-600">
-        <span>EVENTOS</span>
-        <span className="mx-2">/</span>
-        <span>LA VIE GLOW PARTY - INAUGURAÇÃO - BLUMENAU</span>
-      </div>
+      <div className="text-sm text-gray-600">{generateBreadcrumb()}</div>
       <div className="flex items-center">
         <div className="text-right mr-3">
           <div className="text-sm font-semibold">Olá, {user?.email ? user.email.split("@")[0] : "Usuário"}</div>
