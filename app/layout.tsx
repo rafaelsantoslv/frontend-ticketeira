@@ -8,7 +8,7 @@ import { Toaster } from "@/components/ui/toaster"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "unyx ticket - Plataforma de Venda de Ingressos",
+  title: "Unyx Ticket - Plataforma de Venda de Ingressos",
   description: "Gerencie eventos, venda ingressos e acompanhe resultados em tempo real",
   generator: 'v0.dev'
 }
