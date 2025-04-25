@@ -44,7 +44,7 @@ export default function LoginPage() {
       console.log("Login bem-sucedido, redirecionando para /painel/dashboard")
       router.push("/painel")
     } else {
-      setError(result.error || "Falha na autenticação")
+      setError(result.error || "Falha na autenticaçãoo")
       setIsLoading(false)
     }
   }
