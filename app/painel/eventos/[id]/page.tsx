@@ -252,16 +252,7 @@ export default function EventoDetalhesPage() {
                     <h1 className="text-2xl font-bold tracking-tight">{event.title}</h1>
                     {renderEventStatus(event.status)}
                 </div>
-                <div className="flex gap-2">
-                    <Button variant="outline" onClick={() => setIsFormOpen(true)}>
-                        <Edit className="mr-2 h-4 w-4" />
-                        Editar Evento
-                    </Button>
-                    <Button className="bg-[#400041] hover:bg-[#5a105b]" onClick={() => setIsBatchFormOpen(true)}>
-                        <PlusCircle className="mr-2 h-4 w-4" />
-                        Adicionar Lote
-                    </Button>
-                </div>
+
             </div>
 
             <Tabs defaultValue="dashboard">
