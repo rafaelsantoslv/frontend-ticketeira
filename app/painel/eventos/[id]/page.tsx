@@ -421,7 +421,14 @@ export default function EventoDetalhesPage() {
 
                 {/* Info Tab */}
                 <TabsContent value="info">
-                    <Card className="overflow-hidden">
+                    <Card className="overflow-hidden p-6">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-lg font-semibold">Lotes</h3>
+                            <Button className="bg-[#400041] hover:bg-[#5a105b]" onClick={() => setIsFormOpen(true)}>
+                                <Edit className="mr-2 h-4 w-4" />
+                                Editar Evento
+                            </Button>
+                        </div>
                         <div className="flex flex-col md:flex-row">
                             <div className="md:w-1/3">
                                 <img src={event.image || "/placeholder.svg"} alt={event.title} className="h-full w-full object-cover" />
