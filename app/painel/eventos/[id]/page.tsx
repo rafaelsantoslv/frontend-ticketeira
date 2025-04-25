@@ -29,6 +29,8 @@ import { ptBR } from "date-fns/locale"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import CouponForm from "@/components/coupon-form"
+import CourtesyForm from "@/components/courtesy-form"
 
 // Define types
 export type Batch = {
@@ -47,6 +49,28 @@ export type Sector = {
     capacity: number
     description?: string
     expanded?: boolean
+}
+export type Coupon = {
+    id: string
+    code: string
+    discountType: "percentage" | "fixed"
+    discountValue: number
+    unlimited: boolean
+    usageLimit?: number
+    usageCount: number
+    active: boolean
+    createdAt: Date
+}
+
+export type Courtesy = {
+    id: string
+    firstName: string
+    lastName: string
+    email: string
+    sectorId: string
+    ticketCode: string
+    createdAt: Date
+    sent: boolean
 }
 
 export type Event = {
@@ -82,6 +106,11 @@ export default function EventoDetalhesPage() {
     const [event, setEvent] = useState<Event | null>(null)
     const [isLoading, setIsLoading] = useState(true)
     const [expandedSectors, setExpandedSectors] = useState<Record<string, boolean>>({})
+
+    // Adicionar os novos estados e funções para gerenciar cupons e cortesias
+    const [coupons, setCoupons] = useState<Coupon[]>([])
+    const [courtesies, setCourtesies] = useState<Courtesy[]>([])
+    const [isSubmittingCourtesy, setIsSubmittingCourtesy] = useState(false)
 
     // Simular carregamento de dados do evento
     useEffect(() => {
@@ -346,6 +375,93 @@ export default function EventoDetalhesPage() {
         if (!event) return []
         return event.batches.filter((batch) => batch.sectorId === sectorId)
     }
+    const handleCreateCoupon = (data: any) => {
+        const newCoupon: Coupon = {
+            id: `c${Date.now()}`,
+            code: data.code,
+            discountType: data.discountType,
+            discountValue: data.discountValue,
+            unlimited: data.unlimited,
+            usageLimit: data.usageLimit,
+            usageCount: 0,
+            active: data.active,
+            createdAt: new Date(),
+        }
+
+        setCoupons([...coupons, newCoupon])
+
+        toast({
+            title: "Cupom criado com sucesso!",
+            description: `O cupom "${data.code}" foi criado.`,
+        })
+    }
+
+    // Adicionar função para criar cortesia
+    const handleCreateCourtesy = (data: any) => {
+        setIsSubmittingCourtesy(true)
+
+        // Simular uma chamada de API
+        setTimeout(() => {
+            const ticketCode = "CORT-" + Math.random().toString(36).substring(2, 10).toUpperCase()
+
+            const newCourtesy: Courtesy = {
+                id: `ct${Date.now()}`,
+                firstName: data.firstName,
+                lastName: data.lastName,
+                email: data.email,
+                sectorId: data.sectorId,
+                ticketCode,
+                createdAt: new Date(),
+                sent: false,
+            }
+
+            setCourtesies([...courtesies, newCourtesy])
+
+            toast({
+                title: "Cortesia gerada com sucesso!",
+                description: `A cortesia para ${data.firstName} ${data.lastName} foi gerada e será enviada para ${data.email}.`,
+            })
+
+            setIsSubmittingCourtesy(false)
+        }, 1500)
+    }
+
+    // Adicionar função para deletar cupom
+    const handleDeleteCoupon = (couponId: string) => {
+        setCoupons(coupons.filter((coupon) => coupon.id !== couponId))
+
+        toast({
+            title: "Cupom excluído",
+            description: "O cupom foi excluído com sucesso.",
+        })
+    }
+
+    // Adicionar função para reenviar cortesia
+    const handleResendCourtesy = (courtesyId: string) => {
+        setCourtesies(
+            courtesies.map((courtesy) => {
+                if (courtesy.id === courtesyId) {
+                    return { ...courtesy, sent: true }
+                }
+                return courtesy
+            }),
+        )
+
+        toast({
+            title: "Cortesia reenviada",
+            description: "A cortesia foi reenviada com sucesso.",
+        })
+    }
+
+    // Adicionar função para deletar cortesia
+    const handleDeleteCourtesy = (courtesyId: string) => {
+        setCourtesies(courtesies.filter((courtesy) => courtesy.id !== courtesyId))
+
+        toast({
+            title: "Cortesia excluída",
+            description: "A cortesia foi excluída com sucesso.",
+        })
+    }
 
 
     // Calcular estatísticas do setor
@@ -394,7 +510,9 @@ export default function EventoDetalhesPage() {
                 <TabsList className="mb-4">
                     <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
                     <TabsTrigger value="info">Informações</TabsTrigger>
-                    <TabsTrigger value="lotes">Ingressos</TabsTrigger>
+                    <TabsTrigger value="lotes">Setores e Lotes</TabsTrigger>
+                    <TabsTrigger value="cupons">Cupons</TabsTrigger>
+                    <TabsTrigger value="cortesias">Cortesias</TabsTrigger>
                     <TabsTrigger value="vendas">Vendas</TabsTrigger>
                     <TabsTrigger value="participantes">Participantes</TabsTrigger>
                 </TabsList>
@@ -706,6 +824,153 @@ export default function EventoDetalhesPage() {
                         )}
                     </div>
 
+                </TabsContent>
+
+                <TabsContent value="cupons">
+                    <div className="space-y-6">
+                        <div className="flex justify-between items-center">
+                            <h3 className="text-lg font-semibold">Cupons de Desconto</h3>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <Card className="p-6">
+                                <CardHeader className="px-0 pt-0">
+                                    <CardTitle className="text-lg">Criar Novo Cupom</CardTitle>
+                                </CardHeader>
+                                <CardContent className="px-0 pb-0">
+                                    <CouponForm onSubmit={handleCreateCoupon} />
+                                </CardContent>
+                            </Card>
+
+                            <Card className="p-6">
+                                <CardHeader className="px-0 pt-0">
+                                    <CardTitle className="text-lg">Cupons Ativos</CardTitle>
+                                </CardHeader>
+                                <CardContent className="px-0 pb-0">
+                                    {coupons.length === 0 ? (
+                                        <div className="text-center py-8 text-muted-foreground">
+                                            Nenhum cupom cadastrado. Crie um novo cupom ao lado.
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-4">
+                                            {coupons.map((coupon) => (
+                                                <div key={coupon.id} className="flex items-center justify-between p-3 border rounded-md">
+                                                    <div>
+                                                        <div className="flex items-center">
+                                                            <span className="font-medium">{coupon.code}</span>
+                                                            <span
+                                                                className={`ml-2 text-xs px-2 py-0.5 rounded-full ${coupon.active ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                                                                    }`}
+                                                            >
+                                                                {coupon.active ? "Ativo" : "Inativo"}
+                                                            </span>
+                                                        </div>
+                                                        <div className="text-sm text-gray-500">
+                                                            {coupon.discountType === "percentage"
+                                                                ? `${coupon.discountValue}% de desconto`
+                                                                : `${formatCurrency(coupon.discountValue)} de desconto`}
+                                                            {coupon.unlimited
+                                                                ? " • Uso ilimitado"
+                                                                : ` • ${coupon.usageCount}/${coupon.usageLimit} usos`}
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex space-x-2">
+                                                        <Button
+                                                            size="sm"
+                                                            variant="outline"
+                                                            className="text-red-500 hover:text-red-700"
+                                                            onClick={() => handleDeleteCoupon(coupon.id)}
+                                                        >
+                                                            <Trash2 className="h-4 w-4" />
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </div>
+                </TabsContent>
+
+                <TabsContent value="cortesias">
+                    <div className="space-y-6">
+                        <div className="flex justify-between items-center">
+                            <h3 className="text-lg font-semibold">Ingressos Cortesia</h3>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <Card className="p-6">
+                                <CardHeader className="px-0 pt-0">
+                                    <CardTitle className="text-lg">Gerar Nova Cortesia</CardTitle>
+                                </CardHeader>
+                                <CardContent className="px-0 pb-0">
+                                    <CourtesyForm
+                                        onSubmit={handleCreateCourtesy}
+                                        sectors={event.sectors}
+                                        isSubmitting={isSubmittingCourtesy}
+                                    />
+                                </CardContent>
+                            </Card>
+
+                            <Card className="p-6">
+                                <CardHeader className="px-0 pt-0">
+                                    <CardTitle className="text-lg">Cortesias Geradas</CardTitle>
+                                </CardHeader>
+                                <CardContent className="px-0 pb-0">
+                                    {courtesies.length === 0 ? (
+                                        <div className="text-center py-8 text-muted-foreground">
+                                            Nenhuma cortesia gerada. Crie uma nova cortesia ao lado.
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-4">
+                                            {courtesies.map((courtesy) => {
+                                                const sector = event.sectors.find((s) => s.id === courtesy.sectorId)
+
+                                                return (
+                                                    <div key={courtesy.id} className="flex items-center justify-between p-3 border rounded-md">
+                                                        <div>
+                                                            <div className="flex items-center">
+                                                                <span className="font-medium">
+                                                                    {courtesy.firstName} {courtesy.lastName}
+                                                                </span>
+                                                                <span
+                                                                    className={`ml-2 text-xs px-2 py-0.5 rounded-full ${courtesy.sent ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"
+                                                                        }`}
+                                                                >
+                                                                    {courtesy.sent ? "Enviado" : "Pendente"}
+                                                                </span>
+                                                            </div>
+                                                            <div className="text-sm text-gray-500">
+                                                                {courtesy.email} • {sector?.name || "Setor desconhecido"}
+                                                            </div>
+                                                            <div className="text-xs text-gray-400 mt-1">Código: {courtesy.ticketCode}</div>
+                                                        </div>
+                                                        <div className="flex space-x-2">
+                                                            {!courtesy.sent && (
+                                                                <Button size="sm" variant="outline" onClick={() => handleResendCourtesy(courtesy.id)}>
+                                                                    Enviar
+                                                                </Button>
+                                                            )}
+                                                            <Button
+                                                                size="sm"
+                                                                variant="outline"
+                                                                className="text-red-500 hover:text-red-700"
+                                                                onClick={() => handleDeleteCourtesy(courtesy.id)}
+                                                            >
+                                                                <Trash2 className="h-4 w-4" />
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                )
+                                            })}
+                                        </div>
+                                    )}
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </div>
                 </TabsContent>
 
                 <TabsContent value="vendas">
