@@ -18,12 +18,13 @@ jobs:
       - name: Deploy Frontend via SSH
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << 'ENDSSH'
+            echo "🧹 Limpando imagens não utilizadas"
+            docker image prune -f
+            
             echo "🔁 Iniciando deploy do frontend"
             cd /opt/ticketeira/frontend-ticketeira
             git pull origin main
 
-            echo "🧹 Limpando imagens não utilizadas"
-            docker image prune -f
             
             echo "📦 Removendo containers e imagens antigas"
             docker-compose rm -f frontend
