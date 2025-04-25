@@ -21,6 +21,9 @@ jobs:
             echo "🔁 Iniciando deploy do frontend"
             cd /opt/ticketeira/frontend-ticketeira
             git pull origin main
+
+            echo "🧹 Limpando imagens não utilizadas"
+            docker image prune -f
             
             echo "📦 Removendo containers e imagens antigas"
             docker-compose rm -f frontend
@@ -43,4 +46,5 @@ jobs:
             
             echo "🧹 Limpando imagens não utilizadas"
             docker image prune -f
+            
           ENDSSH
