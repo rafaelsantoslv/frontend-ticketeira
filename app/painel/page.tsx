@@ -276,7 +276,7 @@ export default function PainelPage() {
                     )}
                 </CardContent>
                 <CardFooter className="flex justify-center">
-                    <Link href="/painel/informacoes">
+                    <Link href="/painel/eventos">
                         <Button variant="outline">Ver Todos os Eventos</Button>
                     </Link>
                 </CardFooter>
