@@ -115,7 +115,7 @@ export default function PainelPage() {
                     </p>
                 </div>
                 <div className="mt-4 md:mt-0">
-                    <Link href="/painel/informacoes">
+                    <Link href="/painel/eventos/novo">
                         <Button className="bg-[#400041] hover:bg-[#5a105b]">
                             <Plus className="mr-2 h-4 w-4" />
                             Criar Novo Evento
@@ -276,7 +276,7 @@ export default function PainelPage() {
                     )}
                 </CardContent>
                 <CardFooter className="flex justify-center">
-                    <Link href="/painel/informacoes">
+                    <Link href="/painel/eventos">
                         <Button variant="outline">Ver Todos os Eventos</Button>
                     </Link>
                 </CardFooter>
