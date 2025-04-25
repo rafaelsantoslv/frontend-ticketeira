@@ -17,23 +17,36 @@ import {
     DollarSign,
     Ticket,
     ArrowUpRight,
+    ChevronDown,
+    ChevronUp,
 } from "lucide-react"
 import EventCreationForm from "@/components/event-creation-form"
 import { toast } from "@/components/ui/use-toast"
 import BatchManagementForm from "@/components/batch-management-form"
+import SectorManagementForm from "@/components/sector-management-form"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 
-// Define event and batch types
+// Define types
 export type Batch = {
     id: string
+    sectorId: string
     name: string
     quantity: number
     price: number
     active: boolean
     sold: number
+}
+
+export type Sector = {
+    id: string
+    name: string
+    capacity: number
+    description?: string
+    expanded?: boolean
 }
 
 export type Event = {
@@ -48,6 +61,7 @@ export type Event = {
     about: string
     image?: string
     coverImage?: string
+    sectors: Sector[]
     batches: Batch[]
     status: "active" | "upcoming" | "completed" | "canceled"
     stats: {
@@ -64,8 +78,10 @@ export default function EventoDetalhesPage() {
 
     const [isFormOpen, setIsFormOpen] = useState(false)
     const [isBatchFormOpen, setIsBatchFormOpen] = useState(false)
+    const [isSectorFormOpen, setIsSectorFormOpen] = useState(false)
     const [event, setEvent] = useState<Event | null>(null)
     const [isLoading, setIsLoading] = useState(true)
+    const [expandedSectors, setExpandedSectors] = useState<Record<string, boolean>>({})
 
     // Simular carregamento de dados do evento
     useEffect(() => {
@@ -90,33 +106,66 @@ export default function EventoDetalhesPage() {
                     ticketMedium: 48.76,
                     checkins: 132,
                 },
+                sectors: [
+                    {
+                        id: "s1",
+                        name: "Pista",
+                        capacity: 500,
+                        description: "Área principal do evento",
+                    },
+                    {
+                        id: "s2",
+                        name: "Camarote",
+                        capacity: 100,
+                        description: "Área VIP com vista privilegiada",
+                    },
+                ],
                 batches: [
                     {
                         id: "1",
-                        name: "Lote 1",
-                        quantity: 100,
+                        sectorId: "s1",
+                        name: "1º Lote - Pista",
+                        quantity: 200,
                         price: 50,
                         active: false,
-                        sold: 100,
+                        sold: 200,
                     },
                     {
                         id: "2",
-                        name: "Lote 2",
-                        quantity: 150,
+                        sectorId: "s1",
+                        name: "2º Lote - Pista",
+                        quantity: 300,
                         price: 70,
                         active: true,
-                        sold: 108,
+                        sold: 58,
                     },
                     {
                         id: "3",
-                        name: "Lote VIP",
+                        sectorId: "s2",
+                        name: "Camarote VIP",
                         quantity: 50,
                         price: 120,
                         active: true,
-                        sold: 50,
+                        sold: 0,
+                    },
+                    {
+                        id: "4",
+                        sectorId: "s2",
+                        name: "Camarote Premium",
+                        quantity: 50,
+                        price: 150,
+                        active: true,
+                        sold: 0,
                     },
                 ],
             }
+
+            // Inicializar todos os setores como expandidos
+            const initialExpandedState: Record<string, boolean> = {}
+            mockEvent.sectors.forEach((sector) => {
+                initialExpandedState[sector.id] = false
+            })
+            setExpandedSectors(initialExpandedState)
 
             setEvent(mockEvent)
             setIsLoading(false)
@@ -139,35 +188,93 @@ export default function EventoDetalhesPage() {
         setIsFormOpen(false)
     }
 
-    const handleAddBatch = (batch: Omit<Batch, "id" | "sold">) => {
+    const handleAddSector = (sectorData: Omit<Sector, "id">) => {
+        if (!event) return
+
+        const newSector: Sector = {
+            ...sectorData,
+            id: `s${Date.now()}`,
+        }
+
+        const updatedEvent = {
+            ...event,
+            sectors: [...event.sectors, newSector],
+        }
+
+        setEvent(updatedEvent)
+        setExpandedSectors((prev) => ({ ...prev, [newSector.id]: true }))
+
+        toast({
+            title: "Setor adicionado com sucesso!",
+            description: `O setor "${sectorData.name}" foi adicionado ao evento.`,
+        })
+
+        setIsSectorFormOpen(false)
+    }
+
+    const handleAddBatch = (batchData: Omit<Batch, "id" | "sold">) => {
         if (!event) return
 
         const newBatch: Batch = {
-            ...batch,
-            id: Date.now().toString(),
+            ...batchData,
+            id: `b${Date.now()}`,
             sold: 0,
         }
 
-        setEvent({
+        const updatedEvent = {
             ...event,
             batches: [...event.batches, newBatch],
-        })
+        }
+
+        setEvent(updatedEvent)
+
+        const sectorName = event.sectors.find((s) => s.id === batchData.sectorId)?.name || "desconhecido"
 
         toast({
             title: "Lote adicionado com sucesso!",
-            description: `O lote "${batch.name}" foi adicionado ao evento.`,
+            description: `O lote "${batchData.name}" foi adicionado ao setor "${sectorName}".`,
         })
 
         setIsBatchFormOpen(false)
     }
 
+    const handleDeleteSector = (sectorId: string) => {
+        if (!event) return
+
+        // Verificar se existem lotes associados a este setor
+        const hasAssociatedBatches = event.batches.some((batch) => batch.sectorId === sectorId)
+
+        if (hasAssociatedBatches) {
+            toast({
+                title: "Não é possível excluir o setor",
+                description: "Este setor possui lotes associados. Remova os lotes primeiro.",
+                variant: "destructive",
+            })
+            return
+        }
+
+        const updatedEvent = {
+            ...event,
+            sectors: event.sectors.filter((sector) => sector.id !== sectorId),
+        }
+
+        setEvent(updatedEvent)
+
+        toast({
+            title: "Setor excluído",
+            description: "O setor foi excluído com sucesso.",
+        })
+    }
+
     const handleDeleteBatch = (batchId: string) => {
         if (!event) return
 
-        setEvent({
+        const updatedEvent = {
             ...event,
             batches: event.batches.filter((batch) => batch.id !== batchId),
-        })
+        }
+
+        setEvent(updatedEvent)
 
         toast({
             title: "Lote excluído",
@@ -178,7 +285,7 @@ export default function EventoDetalhesPage() {
     const handleToggleBatchStatus = (batchId: string) => {
         if (!event) return
 
-        setEvent({
+        const updatedEvent = {
             ...event,
             batches: event.batches.map((batch) => {
                 if (batch.id === batchId) {
@@ -189,7 +296,9 @@ export default function EventoDetalhesPage() {
                 }
                 return batch
             }),
-        })
+        }
+
+        setEvent(updatedEvent)
 
         const batch = event.batches.find((b) => b.id === batchId)
         if (batch) {
@@ -199,6 +308,13 @@ export default function EventoDetalhesPage() {
                 description: `O lote "${batch.name}" foi ${newStatus ? "ativado" : "desativado"}.`,
             })
         }
+    }
+
+    const toggleSectorExpanded = (sectorId: string) => {
+        setExpandedSectors((prev) => ({
+            ...prev,
+            [sectorId]: !prev[sectorId],
+        }))
     }
 
     // Função para renderizar o status do evento
@@ -223,6 +339,24 @@ export default function EventoDetalhesPage() {
             style: "currency",
             currency: "BRL",
         }).format(value)
+    }
+
+    // Agrupar lotes por setor
+    const getBatchesBySector = (sectorId: string) => {
+        if (!event) return []
+        return event.batches.filter((batch) => batch.sectorId === sectorId)
+    }
+
+    // Calcular estatísticas do setor
+    const getSectorStats = (sectorId: string) => {
+        if (!event) return { totalSold: 0, totalRevenue: 0, totalCapacity: 0 }
+
+        const batches = getBatchesBySector(sectorId)
+        const totalSold = batches.reduce((sum, batch) => sum + batch.sold, 0)
+        const totalRevenue = batches.reduce((sum, batch) => sum + batch.sold * batch.price, 0)
+        const totalCapacity = batches.reduce((sum, batch) => sum + batch.quantity, 0)
+
+        return { totalSold, totalRevenue, totalCapacity }
     }
 
     if (isLoading) {
@@ -252,23 +386,14 @@ export default function EventoDetalhesPage() {
                     <h1 className="text-2xl font-bold tracking-tight">{event.title}</h1>
                     {renderEventStatus(event.status)}
                 </div>
-                <div className="flex gap-2">
-                    <Button variant="outline" onClick={() => setIsFormOpen(true)}>
-                        <Edit className="mr-2 h-4 w-4" />
-                        Editar Evento
-                    </Button>
-                    <Button className="bg-[#400041] hover:bg-[#5a105b]" onClick={() => setIsBatchFormOpen(true)}>
-                        <PlusCircle className="mr-2 h-4 w-4" />
-                        Adicionar Lote
-                    </Button>
-                </div>
+
             </div>
 
             <Tabs defaultValue="dashboard">
                 <TabsList className="mb-4">
                     <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
                     <TabsTrigger value="info">Informações</TabsTrigger>
-                    <TabsTrigger value="lotes">Lotes</TabsTrigger>
+                    <TabsTrigger value="lotes">Ingressos</TabsTrigger>
                     <TabsTrigger value="vendas">Vendas</TabsTrigger>
                     <TabsTrigger value="participantes">Participantes</TabsTrigger>
                 </TabsList>
@@ -337,32 +462,31 @@ export default function EventoDetalhesPage() {
                             </Card>
                         </div>
 
-                        {/* Sales by Batch */}
+                        {/* Sales by Sector */}
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <Card>
                                 <CardHeader className="pb-2">
-                                    <CardTitle className="text-lg">Vendas por Lote</CardTitle>
+                                    <CardTitle className="text-lg">Vendas por Setor</CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="space-y-4">
-                                        {event.batches.map((batch) => (
-                                            <div key={batch.id} className="flex items-center justify-between">
-                                                <div className="flex items-center gap-2">
-                                                    <div
-                                                        className={`w-3 h-3 rounded-full ${batch.active ? "bg-green-500" : "bg-gray-300"}`}
-                                                    ></div>
-                                                    <span className="font-medium">{batch.name}</span>
-                                                </div>
-                                                <div className="text-right">
-                                                    <div className="text-sm font-medium">
-                                                        {batch.sold} / {batch.quantity} ingressos
+                                        {event.sectors.map((sector) => {
+                                            const stats = getSectorStats(sector.id)
+                                            return (
+                                                <div key={sector.id} className="flex items-center justify-between">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-3 h-3 rounded-full bg-[#400041]"></div>
+                                                        <span className="font-medium">{sector.name}</span>
                                                     </div>
-                                                    <div className="text-sm text-muted-foreground">
-                                                        {formatCurrency(batch.price * batch.sold)}
+                                                    <div className="text-right">
+                                                        <div className="text-sm font-medium">
+                                                            {stats.totalSold} / {sector.capacity} ingressos
+                                                        </div>
+                                                        <div className="text-sm text-muted-foreground">{formatCurrency(stats.totalRevenue)}</div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        ))}
+                                            )
+                                        })}
                                     </div>
 
                                     <div className="mt-6 pt-4 border-t">
@@ -478,61 +602,129 @@ export default function EventoDetalhesPage() {
                     </Card>
                 </TabsContent>
 
-                {/* Lotes Tab */}
+                {/* Setores e Lotes Tab */}
                 <TabsContent value="lotes">
-                    <Card className="p-6">
-                        <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg font-semibold">Lotes</h3>
-                            <Button className="bg-[#400041] hover:bg-[#5a105b]" onClick={() => setIsBatchFormOpen(true)}>
-                                <PlusCircle className="mr-2 h-4 w-4" />
-                                Adicionar Lote
-                            </Button>
+                    <div className="space-y-6">
+                        <div className="flex justify-between items-center">
+                            <h3 className="text-lg font-semibold">Setores e Lotes</h3>
+                            <div className="flex gap-2">
+                                <Button className="bg-[#400041] hover:bg-[#5a105b]" onClick={() => setIsSectorFormOpen(true)}>
+                                    <PlusCircle className="mr-2 h-4 w-4" />
+                                    Adicionar Setor
+                                </Button>
+
+                            </div>
                         </div>
 
-                        {event.batches.length === 0 ? (
-                            <div className="text-center py-8 text-muted-foreground">
-                                Nenhum lote cadastrado. Clique em "Adicionar Lote" para criar um novo lote.
-                            </div>
+                        {event.sectors.length === 0 ? (
+                            <Card className="p-6">
+                                <div className="text-center py-8 text-muted-foreground">
+                                    Nenhum setor cadastrado. Clique em "Adicionar Setor" para criar um novo setor.
+                                </div>
+                            </Card>
                         ) : (
                             <div className="space-y-4">
-                                {event.batches.map((batch) => (
-                                    <div key={batch.id} className="flex items-center justify-between p-4 border rounded-md">
-                                        <div>
-                                            <div className="flex items-center">
-                                                <span className="font-medium">{batch.name}</span>
-                                                <span
-                                                    className={`ml-2 text-xs px-2 py-0.5 rounded-full ${batch.active ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-                                                        }`}
-                                                >
-                                                    {batch.active ? "Ativo" : "Inativo"}
-                                                </span>
-                                            </div>
-                                            <div className="text-sm text-gray-500">
-                                                R$ {batch.price.toFixed(2)} • {batch.sold}/{batch.quantity} ingressos vendidos
-                                            </div>
-                                        </div>
-                                        <div className="flex space-x-2">
-                                            <Button
-                                                size="sm"
-                                                variant={batch.active ? "default" : "outline"}
-                                                onClick={() => handleToggleBatchStatus(batch.id)}
-                                            >
-                                                {batch.active ? "Desativar" : "Ativar"}
-                                            </Button>
-                                            <Button
-                                                size="sm"
-                                                variant="outline"
-                                                className="text-red-500 hover:text-red-700"
-                                                onClick={() => handleDeleteBatch(batch.id)}
-                                            >
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                    </div>
-                                ))}
+                                {event.sectors.map((sector) => {
+                                    const sectorBatches = getBatchesBySector(sector.id)
+                                    const stats = getSectorStats(sector.id)
+                                    const isExpanded = expandedSectors[sector.id]
+
+                                    return (
+                                        <Card key={sector.id} className="overflow-hidden">
+                                            <Collapsible open={isExpanded} onOpenChange={() => toggleSectorExpanded(sector.id)}>
+                                                <div className="p-4 flex items-center justify-between bg-gray-50 border-b">
+                                                    <div className="flex items-center gap-2">
+                                                        <CollapsibleTrigger asChild>
+                                                            <Button variant="ghost" size="sm" className="p-1">
+                                                                {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                                                            </Button>
+                                                        </CollapsibleTrigger>
+                                                        <div>
+                                                            <h4 className="font-medium text-lg">{sector.name}</h4>
+                                                            <p className="text-sm text-muted-foreground">
+                                                                Capacidade: {sector.capacity} • Vendidos: {stats.totalSold} • Receita:{" "}
+                                                                {formatCurrency(stats.totalRevenue)}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex gap-2">
+                                                        <Button size="sm" variant="outline" onClick={() => setIsBatchFormOpen(true)}>
+                                                            <PlusCircle className="mr-1 h-4 w-4" />
+                                                            Lote
+                                                        </Button>
+                                                        <Button
+                                                            size="sm"
+                                                            variant="outline"
+                                                            className="text-red-500 hover:text-red-700"
+                                                            onClick={() => handleDeleteSector(sector.id)}
+                                                            disabled={sectorBatches.length > 0}
+                                                        >
+                                                            <Trash2 className="h-4 w-4" />
+                                                        </Button>
+                                                    </div>
+                                                </div>
+
+                                                <CollapsibleContent>
+                                                    <div className="p-4">
+                                                        {sector.description && (
+                                                            <p className="text-sm text-muted-foreground mb-4">{sector.description}</p>
+                                                        )}
+
+                                                        {sectorBatches.length === 0 ? (
+                                                            <div className="text-center py-4 text-muted-foreground">
+                                                                Nenhum lote cadastrado para este setor.
+                                                            </div>
+                                                        ) : (
+                                                            <div className="space-y-3">
+                                                                {sectorBatches.map((batch) => (
+                                                                    <div
+                                                                        key={batch.id}
+                                                                        className="flex items-center justify-between p-3 border rounded-md"
+                                                                    >
+                                                                        <div>
+                                                                            <div className="flex items-center">
+                                                                                <span className="font-medium">{batch.name}</span>
+                                                                                <span
+                                                                                    className={`ml-2 text-xs px-2 py-0.5 rounded-full ${batch.active ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                                                                                        }`}
+                                                                                >
+                                                                                    {batch.active ? "Ativo" : "Inativo"}
+                                                                                </span>
+                                                                            </div>
+                                                                            <div className="text-sm text-gray-500">
+                                                                                {formatCurrency(batch.price)} • {batch.sold}/{batch.quantity} ingressos vendidos
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="flex space-x-2">
+                                                                            <Button
+                                                                                size="sm"
+                                                                                variant={batch.active ? "default" : "outline"}
+                                                                                onClick={() => handleToggleBatchStatus(batch.id)}
+                                                                            >
+                                                                                {batch.active ? "Desativar" : "Ativar"}
+                                                                            </Button>
+                                                                            <Button
+                                                                                size="sm"
+                                                                                variant="outline"
+                                                                                className="text-red-500 hover:text-red-700"
+                                                                                onClick={() => handleDeleteBatch(batch.id)}
+                                                                            >
+                                                                                <Trash2 className="h-4 w-4" />
+                                                                            </Button>
+                                                                        </div>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </CollapsibleContent>
+                                            </Collapsible>
+                                        </Card>
+                                    )
+                                })}
                             </div>
                         )}
-                    </Card>
+                    </div>
                 </TabsContent>
 
                 <TabsContent value="vendas">
@@ -562,11 +754,19 @@ export default function EventoDetalhesPage() {
                 initialData={event}
             />
 
+            <SectorManagementForm
+                isOpen={isSectorFormOpen}
+                onClose={() => setIsSectorFormOpen(false)}
+                onSubmit={handleAddSector}
+                eventName={event.title}
+            />
+
             <BatchManagementForm
                 isOpen={isBatchFormOpen}
                 onClose={() => setIsBatchFormOpen(false)}
                 onSubmit={handleAddBatch}
                 eventName={event.title}
+                sectors={event.sectors}
             />
         </div>
     )
