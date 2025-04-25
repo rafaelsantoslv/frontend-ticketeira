@@ -1,61 +1,69 @@
 "use client"
 
 import Link from "next/link"
-import { ArrowLeft, CalendarSearch, Columns2, X } from "lucide-react"
+import { BotMessageSquare, CalendarSearch, ChevronLeft, ChevronRight, Columns2, FileText, LayoutDashboard, MessageCircle, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { usePathname } from "next/navigation"
+import { useSidebarState } from "@/app/painel/hooks/use-sidebar-state"
+import { cn } from "@/lib/utils"
+import { SideBarItem } from "./sidebar-item"
 
 export default function Sidebar() {
-  const pathname = usePathname()
+  const { collapsed, toggleSidebar } = useSidebarState()
 
-  const isActive = (path: string) => {
-    // Se for exatamente o caminho /painel, só retorna true se for exatamente igual
-    if (path === '/painel') {
-      return pathname === '/painel'
-    }
-    // Para os outros caminhos, verifica se é exatamente igual ou se começa com o path
-    return pathname === path || pathname.startsWith(`${path}/`)
+  const handleToggle = (e: React.MouseEvent<HTMLDivElement>) => {
+    // se o clique veio de dentro de um link ou botão, ignora
+    const target = e.target as HTMLElement
+    if (target.closest("a") || target.closest("button")) return
+    toggleSidebar()
   }
 
+
   return (
-    <div className="w-[220px] bg-[#400041] flex flex-col">
+    <div onClick={handleToggle} className={cn(
+      "bg-[#400041] flex flex-col transition-all duration-300 ease-in-out",
+      collapsed ? "w-[70px]" : "w-[220px]",
+    )}>
       <div className="flex items-center justify-between p-4 border-b border-[#5a105b]">
         <Link href="/" className="flex items-center">
           <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
             <span className="text-[#400041] text-xl font-bold">u</span>
           </div>
-          <span className="ml-2 text-white text-lg font-semibold">unyx ticket</span>
+          {!collapsed && <span className="ml-2 text-white text-lg font-semibold">unyx ticket</span>}
         </Link>
-        <Button variant="ghost" size="icon" className="text-white">
-          <X className="h-5 w-5" />
-        </Button>
       </div>
 
       <div className="mt-4">
-        <Link href="/" className="flex items-center px-4 py-3 text-white hover:bg-[#5a105b]">
-          <ArrowLeft className="h-5 w-5 mr-3" />
-          <span>Voltar</span>
-        </Link>
+        <SideBarItem link="/painel" name="Painel" icon={<LayoutDashboard className="h-5 w-5" />} />
+        <SideBarItem link="/painel/eventos" name="Eventos" icon={<CalendarSearch className="h-5 w-5" />} />
+      </div>
+      <div className="mt-auto border-t border-[#5a105b] py-4">
+        <a
+          href="https://wa.me/554888234180" // Substitua 'seunumero' pelo número do WhatsApp
+          target="_blank"
+          rel="noopener noreferrer"
+          className={cn(
+            "flex items-center py-3 text-white transition-all duration-300 hover:bg-[#5a105b]",
+            collapsed ? "justify-center px-0" : "px-4"
+          )}
+        >
+          <div className="flex items-center justify-center h-5 w-5">
+            <MessageCircle className="h-5 w-5" />
+          </div>
+          {!collapsed && <span className="ml-3">Suporte</span>}
+        </a>
 
         <Link
-          href="/painel"
-          className={`flex items-center px-4 py-3 text-white ${isActive("/painel") ? "bg-[#DC9188]" : "hover:bg-[#5a105b]"}`}
+          href="/termos-de-uso" // Ajuste para a rota correta dos termos de uso
+          className={cn(
+            "flex items-center py-3 text-white transition-all duration-300 hover:bg-[#5a105b]",
+            collapsed ? "justify-center px-0" : "px-4"
+          )}
         >
-          <Columns2 className="h-5 w-5 mr-3" />
-          <span>Painel</span>
+          <div className="flex items-center justify-center h-5 w-5">
+            <FileText className="h-5 w-5" />
+          </div>
+          {!collapsed && <span className="ml-3">Termos de Uso</span>}
         </Link>
-
-        <Link
-          href="/painel/eventos"
-          className={`flex items-center px-4 py-3 text-white ${isActive("/painel/eventos") ? "bg-[#DC9188]" : "hover:bg-[#5a105b]"}`}
-        >
-          <CalendarSearch className="h-5 w-5 mr-3" />
-          <span>Eventos</span>
-        </Link>
-
-
-
-
       </div>
     </div>
   )
