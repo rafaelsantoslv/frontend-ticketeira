@@ -102,7 +102,7 @@ export default function EventoDetalhesPage() {
                 status: "active",
                 stats: {
                     totalSold: 258,
-                    totalRevenue: 12580,
+                    totalRevenue: 14060,
                     ticketMedium: 48.76,
                     checkins: 132,
                 },
@@ -347,6 +347,7 @@ export default function EventoDetalhesPage() {
         return event.batches.filter((batch) => batch.sectorId === sectorId)
     }
 
+
     // Calcular estatísticas do setor
     const getSectorStats = (sectorId: string) => {
         if (!event) return { totalSold: 0, totalRevenue: 0, totalCapacity: 0 }
@@ -401,116 +402,95 @@ export default function EventoDetalhesPage() {
                 {/* Dashboard Tab */}
                 <TabsContent value="dashboard">
                     <div className="space-y-6">
-                        {/* Stats Cards */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                            <Card className="bg-white">
-                                <CardContent className="p-6">
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <p className="text-sm font-medium text-muted-foreground">Total de Vendas</p>
-                                            <h3 className="text-2xl font-bold mt-1">{formatCurrency(event.stats.totalRevenue)}</h3>
-                                        </div>
-                                        <div className="h-12 w-12 rounded-lg bg-[#400041]/10 flex items-center justify-center">
-                                            <DollarSign className="h-6 w-6 text-[#400041]" />
-                                        </div>
+                        {/* Resumo geral */}
+                        <Card className="bg-white">
+                            <CardHeader className="pb-2">
+                                <CardTitle className="text-lg">Resumo de Vendas</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                                    <div>
+                                        <p className="text-sm font-medium text-muted-foreground">Total de Ingressos</p>
+                                        <h3 className="text-2xl font-bold mt-1">{event.stats.totalSold} vendidos</h3>
                                     </div>
-                                </CardContent>
-                            </Card>
-
-                            <Card className="bg-white">
-                                <CardContent className="p-6">
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <p className="text-sm font-medium text-muted-foreground">Ingressos Vendidos</p>
-                                            <h3 className="text-2xl font-bold mt-1">{event.stats.totalSold}</h3>
-                                        </div>
-                                        <div className="h-12 w-12 rounded-lg bg-[#400041]/10 flex items-center justify-center">
-                                            <Ticket className="h-6 w-6 text-[#400041]" />
-                                        </div>
+                                    <div>
+                                        <p className="text-sm font-medium text-muted-foreground">Valor Total</p>
+                                        <h3 className="text-2xl font-bold mt-1">{formatCurrency(event.stats.totalRevenue)}</h3>
                                     </div>
-                                </CardContent>
-                            </Card>
-
-                            <Card className="bg-white">
-                                <CardContent className="p-6">
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <p className="text-sm font-medium text-muted-foreground">Ticket Médio</p>
-                                            <h3 className="text-2xl font-bold mt-1">{formatCurrency(event.stats.ticketMedium)}</h3>
-                                        </div>
-                                        <div className="h-12 w-12 rounded-lg bg-[#400041]/10 flex items-center justify-center">
-                                            <BarChart className="h-6 w-6 text-[#400041]" />
-                                        </div>
+                                    <div>
+                                        <p className="text-sm font-medium text-muted-foreground">Ticket Médio</p>
+                                        <h3 className="text-2xl font-bold mt-1">{formatCurrency(event.stats.ticketMedium)}</h3>
                                     </div>
-                                </CardContent>
-                            </Card>
-
-                            <Card className="bg-white">
-                                <CardContent className="p-6">
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <p className="text-sm font-medium text-muted-foreground">Check-ins</p>
-                                            <h3 className="text-2xl font-bold mt-1">
-                                                {event.stats.checkins} / {event.stats.totalSold}
-                                            </h3>
-                                        </div>
-                                        <div className="h-12 w-12 rounded-lg bg-[#400041]/10 flex items-center justify-center">
-                                            <Users className="h-6 w-6 text-[#400041]" />
-                                        </div>
+                                    <div>
+                                        <p className="text-sm font-medium text-muted-foreground">Check-ins</p>
+                                        <h3 className="text-2xl font-bold mt-1">
+                                            {event.stats.checkins} / {event.stats.totalSold}
+                                        </h3>
                                     </div>
-                                </CardContent>
-                            </Card>
-                        </div>
+                                </div>
+                            </CardContent>
+                        </Card>
 
-                        {/* Sales by Sector */}
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <Card>
-                                <CardHeader className="pb-2">
-                                    <CardTitle className="text-lg">Vendas por Setor</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="space-y-4">
-                                        {event.sectors.map((sector) => {
-                                            const stats = getSectorStats(sector.id)
-                                            return (
-                                                <div key={sector.id} className="flex items-center justify-between">
-                                                    <div className="flex items-center gap-2">
-                                                        <div className="w-3 h-3 rounded-full bg-[#400041]"></div>
-                                                        <span className="font-medium">{sector.name}</span>
-                                                    </div>
-                                                    <div className="text-right">
-                                                        <div className="text-sm font-medium">
-                                                            {stats.totalSold} / {sector.capacity} ingressos
-                                                        </div>
-                                                        <div className="text-sm text-muted-foreground">{formatCurrency(stats.totalRevenue)}</div>
-                                                    </div>
+                        {/* Vendas por Setor */}
+                        <Card className="bg-white">
+                            <CardHeader className="pb-2">
+                                <CardTitle className="text-lg">Vendas por Setor</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-6">
+                                    {event.sectors.map((sector) => {
+                                        const sectorBatches = getBatchesBySector(sector.id)
+                                        const stats = getSectorStats(sector.id)
+
+                                        return (
+                                            <div key={sector.id} className="space-y-2">
+                                                {/* Cabeçalho do setor */}
+                                                <div className="grid grid-cols-3 text-center border-b pb-2">
+                                                    <div className="font-semibold text-lg text-[#400041]">{sector.name}</div>
+                                                    <div className="text-base font-semibold">{stats.totalSold} ingressos</div>
+                                                    <div className="text-base font-semibold">{formatCurrency(stats.totalRevenue)}</div>
                                                 </div>
-                                            )
-                                        })}
+
+                                                {/* Lotes do setor */}
+                                                <div className="space-y-1">
+                                                    {sectorBatches.map((batch) => {
+                                                        const batchTotal = batch.sold * batch.price;
+                                                        return (
+                                                            <div key={batch.id} className="grid grid-cols-3 text-center py-1 text-sm">
+                                                                <div className="font-medium text-gray-600">{batch.name}</div>
+                                                                <div className="text-gray-500">
+                                                                    {batch.sold} x {formatCurrency(batch.price)}
+                                                                </div>
+                                                                <div className="text-gray-600">{formatCurrency(batchTotal)}</div>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+
+                                        )
+                                    })}
+                                    <div className="grid grid-cols-3 text-center border-t pt-3 mt-4 font-semibold text-base">
+                                        <div className="text-[#400041]">Total</div>
+                                        <div>{event.stats.totalSold} ingressos</div>
+                                        <div>{formatCurrency(event.stats.totalRevenue)}</div>
                                     </div>
 
-                                    <div className="mt-6 pt-4 border-t">
-                                        <div className="flex justify-between font-medium">
-                                            <span>Total</span>
-                                            <span>{formatCurrency(event.stats.totalRevenue)}</span>
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
+                                </div>
+                            </CardContent>
+                        </Card>
 
-                            <Card>
-                                <CardHeader className="pb-2">
-                                    <CardTitle className="text-lg">Vendas por Dia</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="h-[250px] flex items-center justify-center bg-gray-50 rounded-md">
-                                        <p className="text-muted-foreground">Gráfico de vendas por dia</p>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        </div>
-
-                        {/* Recent Sales */}
+                        {/* Gráfico de vendas por dia */}
+                        <Card>
+                            <CardHeader className="pb-2">
+                                <CardTitle className="text-lg">Vendas por Dia</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="h-[250px] flex items-center justify-center bg-gray-50 rounded-md">
+                                    <p className="text-muted-foreground">Gráfico de vendas por dia</p>
+                                </div>
+                            </CardContent>
+                        </Card>
                         <Card>
                             <CardHeader className="pb-2">
                                 <div className="flex items-center justify-between">
@@ -725,6 +705,7 @@ export default function EventoDetalhesPage() {
                             </div>
                         )}
                     </div>
+
                 </TabsContent>
 
                 <TabsContent value="vendas">
