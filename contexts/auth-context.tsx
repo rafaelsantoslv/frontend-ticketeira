@@ -45,7 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password: string) => {
     try {
       setIsLoading(true)
-      const response = await fetch("http://34.16.30.144/api/auth/login", {
+      const response = await fetch("https://unyxticket.site/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -85,7 +85,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const register = async (email: string, password: string) => {
     try {
       setIsLoading(true)
-      const response = await fetch("http://34.16.30.144/api/auth/register", {
+      const response = await fetch("https://unyxticket.site/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
