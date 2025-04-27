@@ -1,14 +1,14 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 
 export function useSidebarState() {
     const [collapsed, setCollapsed] = useState<boolean>(() => {
         if (typeof window !== 'undefined') {
             const savedState = localStorage.getItem("sidebar-collapsed")
-            return savedState === "true"
+            return savedState === "false"
         }
-        return false
+        return true
     })
 
 

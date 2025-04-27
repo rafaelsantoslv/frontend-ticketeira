@@ -30,6 +30,7 @@ export default function Header() {
       description: "Você acessou as configurações da conta.",
       action: <ToastAction altText="Fechar">Fechar</ToastAction>,
     })
+    router.push("/painel/configuracoes")
   }
 
   const handleLogout = () => {

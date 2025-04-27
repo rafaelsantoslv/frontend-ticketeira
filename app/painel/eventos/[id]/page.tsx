@@ -20,6 +20,9 @@ import {
     DollarSign,
     TicketMinusIcon,
     Check,
+    Receipt,
+    QrCode,
+    CreditCard,
 } from "lucide-react"
 import EventCreationForm from "@/components/event-creation-form"
 import { toast } from "@/components/ui/use-toast"
@@ -33,6 +36,8 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import CouponForm from "@/components/coupon-form"
 import CourtesyForm from "@/components/courtesy-form"
 import { StatCard } from "@/components/stat-card"
+import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 // Define types
 export type Batch = {
@@ -517,6 +522,7 @@ export default function EventoDetalhesPage() {
                     <TabsTrigger value="cortesias">Cortesias</TabsTrigger>
                     <TabsTrigger value="vendas">Vendas</TabsTrigger>
                     <TabsTrigger value="participantes">Participantes</TabsTrigger>
+                    <TabsTrigger value="checkins">Check-ins</TabsTrigger>
                 </TabsList>
 
                 {/* Dashboard Tab */}
@@ -539,51 +545,116 @@ export default function EventoDetalhesPage() {
                         </Card>
 
                         {/* Vendas por Setor */}
-                        <Card className="bg-white">
-                            <CardHeader className="pb-2">
-                                <CardTitle className="text-lg">Vendas por Setor</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="space-y-6">
-                                    {event.sectors.map((sector) => {
-                                        const sectorBatches = getBatchesBySector(sector.id)
-                                        const stats = getSectorStats(sector.id)
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <Card className="bg-white">
+                                <CardHeader className="pb-2">
+                                    <CardTitle className="text-lg">Vendas por Setor</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="space-y-6">
+                                        {event.sectors.map((sector) => {
+                                            const sectorBatches = getBatchesBySector(sector.id)
+                                            const stats = getSectorStats(sector.id)
 
-                                        return (
-                                            <div key={sector.id} className="space-y-2">
-                                                {/* Cabeçalho do setor */}
-                                                <div className="grid grid-cols-3 border-b pb-2">
-                                                    <div className="font-semibold text-lg text-[#400041] text-left pl-4">{sector.name}</div>
-                                                    <div className="text-base font-semibold text-left pl-4">{stats.totalSold} ingressos</div>
-                                                    <div className="text-base font-semibold text-left pl-4">{formatCurrency(stats.totalRevenue)}</div>
-                                                </div>
+                                            return (
+                                                <div key={sector.id} className="space-y-2">
+                                                    {/* Cabeçalho do setor */}
+                                                    <div className="grid grid-cols-3 border-b pb-2">
+                                                        <div className="font-semibold text-lg text-[#400041] text-left pl-4">{sector.name}</div>
+                                                        <div className="text-base font-semibold text-left pl-4">{stats.totalSold} ingressos</div>
+                                                        <div className="text-base font-semibold text-left pl-4">{formatCurrency(stats.totalRevenue)}</div>
+                                                    </div>
 
-                                                {/* Lotes do setor */}
-                                                <div className="space-y-1">
-                                                    {sectorBatches.map((batch) => {
-                                                        const batchTotal = batch.sold * batch.price;
-                                                        return (
-                                                            <div key={batch.id} className="grid grid-cols-3 py-1 text-sm">
-                                                                <div className="font-medium text-gray-600 text-left pl-4">{batch.name}</div>
-                                                                <div className="text-gray-500 text-left pl-4">
-                                                                    {batch.sold} x {formatCurrency(batch.price)}
+                                                    {/* Lotes do setor */}
+                                                    <div className="space-y-1">
+                                                        {sectorBatches.map((batch) => {
+                                                            const batchTotal = batch.sold * batch.price;
+                                                            return (
+                                                                <div key={batch.id} className="grid grid-cols-3 py-1 text-sm">
+                                                                    <div className="font-medium text-gray-600 text-left pl-4">{batch.name}</div>
+                                                                    <div className="text-gray-500 text-left pl-4">
+                                                                        {batch.sold} x {formatCurrency(batch.price)}
+                                                                    </div>
+                                                                    <div className="text-gray-600 text-left pl-4">{formatCurrency(batchTotal)}</div>
                                                                 </div>
-                                                                <div className="text-gray-600 text-left pl-4">{formatCurrency(batchTotal)}</div>
-                                                            </div>
-                                                        );
-                                                    })}
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </div>
+                                            )
+                                        })}
+                                        <div className="grid grid-cols-3 border-t pt-3 mt-4 font-semibold text-base">
+                                            <div className="text-[#400041] text-left pl-4">Total</div>
+                                            <div className="text-left pl-4">{event.stats.totalSold} ingressos</div>
+                                            <div className="text-left pl-4">{formatCurrency(event.stats.totalRevenue)}</div>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                            <Card className="bg-white">
+                                <CardHeader className="pb-2">
+                                    <CardTitle className="text-lg">Métodos de Pagamento</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="space-y-4">
+                                        {/* Cartão de Crédito */}
+                                        <div className="flex items-center justify-between border-b pb-3">
+                                            <div className="flex items-center">
+                                                <CreditCard className="h-5 w-5 mr-3 text-[#400041]" />
+                                                <div>
+                                                    <p className="font-medium">Cartão de Crédito</p>
+                                                    <p className="text-sm text-muted-foreground">Visa, Mastercard, Elo</p>
                                                 </div>
                                             </div>
-                                        )
-                                    })}
-                                    <div className="grid grid-cols-3 border-t pt-3 mt-4 font-semibold text-base">
-                                        <div className="text-[#400041] text-left pl-4">Total</div>
-                                        <div className="text-left pl-4">{event.stats.totalSold} ingressos</div>
-                                        <div className="text-left pl-4">{formatCurrency(event.stats.totalRevenue)}</div>
+                                            <div className="text-right">
+                                                <p className="font-medium">156 ingressos</p>
+                                                <p className="text-sm text-muted-foreground">{formatCurrency(7800)}</p>
+                                            </div>
+                                        </div>
+
+                                        {/* PIX */}
+                                        <div className="flex items-center justify-between border-b pb-3">
+                                            <div className="flex items-center">
+                                                <QrCode className="h-5 w-5 mr-3 text-[#400041]" />
+                                                <div>
+                                                    <p className="font-medium">PIX</p>
+                                                    <p className="text-sm text-muted-foreground">Pagamento instantâneo</p>
+                                                </div>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="font-medium">82 ingressos</p>
+                                                <p className="text-sm text-muted-foreground">{formatCurrency(4100)}</p>
+                                            </div>
+                                        </div>
+
+                                        {/* Boleto */}
+                                        <div className="flex items-center justify-between border-b pb-3">
+                                            <div className="flex items-center">
+                                                <Receipt className="h-5 w-5 mr-3 text-[#400041]" />
+                                                <div>
+                                                    <p className="font-medium">Boleto</p>
+                                                    <p className="text-sm text-muted-foreground">Pagamento bancário</p>
+                                                </div>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="font-medium">20 ingressos</p>
+                                                <p className="text-sm text-muted-foreground">{formatCurrency(680)}</p>
+                                            </div>
+                                        </div>
+
+                                        {/* Total */}
+                                        <div className="flex items-center justify-between pt-2">
+                                            <div className="font-semibold text-[#400041]">Total</div>
+                                            <div className="text-right">
+                                                <p className="font-semibold">{event.stats.totalSold} ingressos</p>
+                                                <p className="font-semibold">{formatCurrency(event.stats.totalRevenue)}</p>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </CardContent>
-                        </Card>
+                                </CardContent>
+                            </Card>
+
+                        </div>
 
                         {/* Gráfico de vendas por dia */}
                         <Card>
@@ -986,6 +1057,95 @@ export default function EventoDetalhesPage() {
                             <p className="text-muted-foreground">Informações sobre participantes estarão disponíveis aqui.</p>
                         </div>
                     </Card>
+                </TabsContent>
+
+                <TabsContent value="checkins">
+                    <div className="space-y-6">
+                        <div className="flex justify-between items-center">
+                            <h3 className="text-lg font-semibold">Check-ins</h3>
+                            <div className="flex gap-2">
+                                <Input placeholder="Buscar por nome ou código..." className="w-64" />
+                                <Select defaultValue="todos">
+                                    <SelectTrigger className="w-[180px]">
+                                        <SelectValue placeholder="Status" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="todos">Todos</SelectItem>
+                                        <SelectItem value="validados">Validados</SelectItem>
+                                        <SelectItem value="nao-validados">Não validados</SelectItem>
+                                        <SelectItem value="cancelados">Cancelados</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+
+                        <Card>
+                            <CardContent className="p-0">
+                                <div className="relative w-full overflow-auto">
+                                    <table className="w-full caption-bottom text-sm">
+                                        <thead className="[&_tr]:border-b">
+                                            <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                                                <th className="h-12 px-4 text-left align-middle font-medium">Código</th>
+                                                <th className="h-12 px-4 text-left align-middle font-medium">Nome</th>
+                                                <th className="h-12 px-4 text-left align-middle font-medium">Setor</th>
+                                                <th className="h-12 px-4 text-left align-middle font-medium">Lote</th>
+                                                <th className="h-12 px-4 text-left align-middle font-medium">Status</th>
+                                                <th className="h-12 px-4 text-left align-middle font-medium">Data/Hora</th>
+                                                <th className="h-12 px-4 text-left align-middle font-medium">Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="[&_tr:last-child]:border-0">
+                                            <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                                                <td className="p-4 align-middle">#TK-001</td>
+                                                <td className="p-4 align-middle">João Silva</td>
+                                                <td className="p-4 align-middle">Pista</td>
+                                                <td className="p-4 align-middle">1º Lote</td>
+                                                <td className="p-4 align-middle">
+                                                    <Badge className="bg-green-500">Validado</Badge>
+                                                </td>
+                                                <td className="p-4 align-middle">15/06/2023 22:45</td>
+                                                <td className="p-4 align-middle">
+                                                    <Button variant="outline" size="sm" className="text-red-500">
+                                                        Cancelar validação
+                                                    </Button>
+                                                </td>
+                                            </tr>
+                                            <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                                                <td className="p-4 align-middle">#TK-002</td>
+                                                <td className="p-4 align-middle">Maria Souza</td>
+                                                <td className="p-4 align-middle">Camarote</td>
+                                                <td className="p-4 align-middle">VIP</td>
+                                                <td className="p-4 align-middle">
+                                                    <Badge className="bg-yellow-500">Não validado</Badge>
+                                                </td>
+                                                <td className="p-4 align-middle">-</td>
+                                                <td className="p-4 align-middle">
+                                                    <Button variant="outline" size="sm" className="text-green-500">
+                                                        Validar
+                                                    </Button>
+                                                </td>
+                                            </tr>
+                                            <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                                                <td className="p-4 align-middle">#TK-003</td>
+                                                <td className="p-4 align-middle">Carlos Oliveira</td>
+                                                <td className="p-4 align-middle">Pista</td>
+                                                <td className="p-4 align-middle">2º Lote</td>
+                                                <td className="p-4 align-middle">
+                                                    <Badge className="bg-red-500">Cancelado</Badge>
+                                                </td>
+                                                <td className="p-4 align-middle">15/06/2023 23:10</td>
+                                                <td className="p-4 align-middle">
+                                                    <Button variant="outline" size="sm" disabled>
+                                                        Cancelado
+                                                    </Button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
                 </TabsContent>
             </Tabs>
 

@@ -1,8 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { BotMessageSquare, CalendarSearch, ChevronLeft, ChevronRight, Columns2, FileText, LayoutDashboard, MessageCircle, X } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { CalendarSearch, FileText, LayoutDashboard, MessageCircle, User, Wallet } from "lucide-react"
 import { useSidebarState } from "@/app/painel/hooks/use-sidebar-state"
 import { cn } from "@/lib/utils"
 import { SideBarItem } from "./sidebar-item"
@@ -35,6 +34,8 @@ export default function Sidebar() {
       <div className="mt-4">
         <SideBarItem link="/painel" name="Painel" icon={<LayoutDashboard className="h-5 w-5" />} />
         <SideBarItem link="/painel/eventos" name="Eventos" icon={<CalendarSearch className="h-5 w-5" />} />
+        <SideBarItem link="/painel/financeiro" name="Financeiro" icon={<Wallet className="h-5 w-5" />} />
+        <SideBarItem link="/painel/usuarios" name="Usuarios" icon={<User className="h-5 w-5" />} />
       </div>
       <div className="mt-auto border-t border-[#5a105b] py-4">
         <a
