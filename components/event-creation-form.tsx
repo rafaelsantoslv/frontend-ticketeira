@@ -266,11 +266,7 @@ export default function EventCreationForm({ isOpen, onClose, onSubmit, initialDa
                       </FormControl>
                       <SelectContent>
                         <SelectItem value="livre">Livre</SelectItem>
-                        <SelectItem value="10">10 anos</SelectItem>
-                        <SelectItem value="12">12 anos</SelectItem>
-                        <SelectItem value="14">14 anos</SelectItem>
-                        <SelectItem value="16">16 anos</SelectItem>
-                        <SelectItem value="18">18 anos</SelectItem>
+                        <SelectItem value="18">+18 anos</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
