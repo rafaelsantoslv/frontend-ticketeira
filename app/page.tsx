@@ -27,7 +27,7 @@ export default function LandingPage() {
           </nav>
           <div className="flex space-x-4">
             <Link href="/login">
-              <Button variant="outline" className="border-white text-white hover:bg-white hover:text-[#400041]">
+              <Button variant="outline" className="border-white text-[#400041] hover:bg-white hover:text-[#400041]">
                 Entrar
               </Button>
             </Link>
@@ -59,7 +59,7 @@ export default function LandingPage() {
                 <a href="#how-it-works">
                   <Button
                     variant="outline"
-                    className="border-white text-white hover:bg-white hover:text-[#400041] text-lg px-8 py-6"
+                    className="border-white text-[#400041] hover:bg-white hover:text-[#400041] text-lg px-8 py-6"
                   >
                     Saiba Mais
                   </Button>
