@@ -16,6 +16,10 @@ import {
     ChevronDown,
     ChevronUp,
     Edit,
+    Ticket,
+    DollarSign,
+    TicketMinusIcon,
+    Check,
 } from "lucide-react"
 import EventCreationForm from "@/components/event-creation-form"
 import { toast } from "@/components/ui/use-toast"
@@ -28,6 +32,7 @@ import { Badge } from "@/components/ui/badge"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import CouponForm from "@/components/coupon-form"
 import CourtesyForm from "@/components/courtesy-form"
+import { StatCard } from "@/components/stat-card"
 
 // Define types
 export type Batch = {
@@ -522,28 +527,15 @@ export default function EventoDetalhesPage() {
                             <CardHeader className="pb-2">
                                 <CardTitle className="text-lg">Resumo de Vendas</CardTitle>
                             </CardHeader>
-                            <CardContent>
-                                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                                    <div>
-                                        <p className="text-sm font-medium text-muted-foreground">Total de Ingressos</p>
-                                        <h3 className="text-2xl font-bold mt-1">{event.stats.totalSold} vendidos</h3>
-                                    </div>
-                                    <div>
-                                        <p className="text-sm font-medium text-muted-foreground">Valor Total</p>
-                                        <h3 className="text-2xl font-bold mt-1">{formatCurrency(event.stats.totalRevenue)}</h3>
-                                    </div>
-                                    <div>
-                                        <p className="text-sm font-medium text-muted-foreground">Ticket Médio</p>
-                                        <h3 className="text-2xl font-bold mt-1">{formatCurrency(event.stats.ticketMedium)}</h3>
-                                    </div>
-                                    <div>
-                                        <p className="text-sm font-medium text-muted-foreground">Check-ins</p>
-                                        <h3 className="text-2xl font-bold mt-1">
-                                            {event.stats.checkins} / {event.stats.totalSold}
-                                        </h3>
-                                    </div>
-                                </div>
-                            </CardContent>
+                            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                                <StatCard title="Total de Ingressos" icon={<Ticket className="h-4 w-4 text-muted-foreground" />} value={event.stats.totalSold} description="Vendidos" />
+                                <StatCard title="Ticket Médio" icon={<TicketMinusIcon className="h-4 w-4 text-muted-foreground" />} value={formatCurrency(event.stats.ticketMedium)} />
+                                <StatCard title="Check-ins" icon={<Check className="h-4 w-4 text-muted-foreground" />} value={`${event.stats.checkins} / ${event.stats.totalSold}`}
+                                    description="Validados" />
+                                <StatCard title="Valor Total" icon={<DollarSign className="h-4 w-4 text-muted-foreground" />} value={formatCurrency(event.stats.totalRevenue)} description="Arrecadado" />
+                            </div>
+
+
                         </Card>
 
                         {/* Vendas por Setor */}
@@ -828,6 +820,7 @@ export default function EventoDetalhesPage() {
 
                 </TabsContent>
 
+                {/* Cupons de desconto */}
                 <TabsContent value="cupons">
                     <div className="space-y-6">
                         <div className="flex justify-between items-center">
@@ -896,6 +889,7 @@ export default function EventoDetalhesPage() {
                     </div>
                 </TabsContent>
 
+                {/* Cortesias */}
                 <TabsContent value="cortesias">
                     <div className="space-y-6">
                         <div className="flex justify-between items-center">
@@ -975,6 +969,7 @@ export default function EventoDetalhesPage() {
                     </div>
                 </TabsContent>
 
+                {/* Vendas */}
                 <TabsContent value="vendas">
                     <Card className="p-6">
                         <div className="text-center py-8">
@@ -983,7 +978,7 @@ export default function EventoDetalhesPage() {
                         </div>
                     </Card>
                 </TabsContent>
-
+                {/* Participantes */}
                 <TabsContent value="participantes">
                     <Card className="p-6">
                         <div className="text-center py-8">
