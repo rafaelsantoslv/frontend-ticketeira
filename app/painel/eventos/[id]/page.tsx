@@ -687,7 +687,7 @@ export default function EventoDetalhesPage() {
                                         <Clock className="mr-2 h-4 w-4" />
                                         <span>Sobre</span>
                                     </div>
-                                    <p className="text-sm">{event.about}</p>
+                                    <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: event.about }} />
                                 </div>
                             </div>
                         </div>

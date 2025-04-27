@@ -22,6 +22,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import RichTextEditor from "@/components/rich-text-editor"
 
 // Custom validator for DD/MM/YYYY date format
 const dateStringSchema = z.string().refine(
@@ -310,7 +311,11 @@ export default function EventCreationForm({ isOpen, onClose, onSubmit, initialDa
                   <FormItem className="md:col-span-2">
                     <FormLabel>Sobre o Evento</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="Descreva o seu evento..." className="min-h-[120px]" {...field} />
+                      <RichTextEditor
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder="Descreva o seu evento..."
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
