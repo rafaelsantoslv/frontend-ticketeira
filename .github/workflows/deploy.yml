@@ -1,51 +1,67 @@
-name: Deploy Frontend to GCP VM
+name: Deploy Frontend for Ticketeira Unyx
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.8.0
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          node-version: '20'
+          cache: "pnpm"
 
-      - name: Deploy Frontend via SSH
+      - name: Install project
+        run: pnpm install
+
+      - name: Build project
+        run: pnpm build
+
+      - name: Login Docker Hub
+        run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+
+      - name: Build docker image
+        run: docker build -t rafaelsantoslv442/ticketeira-frontend:latest .
+
+      - name: Push image docker
+        run: docker push rafaelsantoslv442/ticketeira-frontend:latest
+
+  deploy:
+    needs: build
+    runs-on: self-hosted
+    steps:
+      - name: Pull image from docker hub
+        run: docker pull rafaelsantoslv442/ticketeira-frontend:latest
+
+      - name: Remove old container
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << 'ENDSSH'
-            echo "🧹 Limpando imagens não utilizadas"
-            docker image prune -f
-            
-            echo "🔁 Iniciando deploy do frontend"
-            cd /opt/ticketeira/frontend-ticketeira
-            git pull origin main
+          if docker ps -a | grep -q frontend_ticketeira; then
+            docker rm -f frontend_ticketeira
+          fi
 
-            
-            echo "📦 Removendo containers e imagens antigas"
-            docker-compose rm -f frontend
-            docker-compose down frontend
-            
-            echo "🏗️ Construindo nova imagem"
-            docker-compose build --no-cache frontend
-            
-            echo "🚀 Iniciando novo container"
-            docker-compose up -d frontend
-            
-            echo "⏳ Aguardando inicialização (30s)"
-            sleep 30
-            
-            echo "🔍 Verificando status do container"
-            docker-compose ps frontend
-            
-            echo "📝 Verificando logs do container"
-            docker-compose logs --tail=50 frontend
-            
-            echo "🧹 Limpando imagens não utilizadas"
-            docker image prune -f
-            
-          ENDSSH
+      - name: Run docker container
+        run: |
+          docker run -d \
+          -p 3000:3000 \
+          -e NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }} \
+          --network ticketeira_default \
+          --name frontend_ticketeira \
+          rafaelsantoslv442/ticketeira-frontend:latest
+
+      - name: Check if container is running
+        run: |
+          if ! docker ps | grep -q frontend_ticketeira; then
+            echo "Container is not running"
+            exit 1
+          fi
+
+      - name: Check container logs
+        run: |
+          sleep 10  # Wait for container to initialize
+          docker logs frontend_ticketeira || true

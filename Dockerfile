@@ -1,53 +1,39 @@
-# Use a Node.js base image
-FROM node:18-alpine AS base
-RUN npm install -g pnpm
+# Etapa 1: Build da aplicação
+FROM node:18-alpine AS builder
 
-# Install dependencies only when needed
-FROM base AS deps
 WORKDIR /app
 
-# Copy package.json and install dependencies
-COPY package.json package-lock.json* ./
-RUN pnpm install
+# Instala pnpm globalmente
+RUN corepack enable && corepack prepare pnpm@8.15.4 --activate
 
-# Rebuild the source code only when needed
-FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+# Copia arquivos de dependências
+COPY pnpm-lock.yaml package.json ./
+
+# Instala dependências com pnpm
+RUN pnpm install --frozen-lockfile
+
+# Copia restante dos arquivos da aplicação
 COPY . .
 
-# Next.js collects anonymous telemetry data about general usage
-# Learn more here: https://nextjs.org/telemetry
-# Uncomment the following line to disable telemetry during the build
-ENV NEXT_TELEMETRY_DISABLED 1
+# Gera build standalone do Next.js
+RUN pnpm build
 
-# Build the application
-RUN pnpm run build
+# Etapa 2: Imagem final para produção
+FROM node:18-alpine AS runner
 
-# Production image, copy all the files and run next
-FROM base AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV=production
 
-# Create a non-root user
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+# Instala pnpm novamente (caso precise rodar algo extra)
+RUN corepack enable && corepack prepare pnpm@8.15.4 --activate
 
-# Copy the necessary files
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# Copia apenas o necessário do build
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/node_modules ./node_modules
 
-# Set the correct permissions
-USER nextjs
-
-# Expose the port the app will run on
 EXPOSE 3000
 
-# Set the environment variable for the server
-ENV PORT 3000
-ENV HOSTNAME "0.0.0.0"
-
-# Start the application
-CMD ["node", "server.js"]
+CMD ["node", ".next/standalone/server.js"]
