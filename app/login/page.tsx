@@ -14,6 +14,8 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useAuth } from "@/contexts/auth-context"
+import { useFormSubmit } from "@/hooks/UseFormSubmit"
+import { AuthResponse } from "@/services/auth.service"
 
 const formSchema = z.object({
   email: z.string().email({ message: "Email inválido" }),
@@ -21,10 +23,11 @@ const formSchema = z.object({
 })
 
 export default function LoginPage() {
-  const { login } = useAuth()
   const router = useRouter()
-  const [error, setError] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
+  const { login } = useAuth()
+  const { isLoading, error, handleSubmit } = useFormSubmit<AuthResponse>({
+    onSuccess: () => router.push("/painel")
+  })
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -33,22 +36,9 @@ export default function LoginPage() {
       password: "",
     },
   })
-
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setError(null)
-    setIsLoading(true)
-
-    const result = await login(values.email, values.password)
-
-    if (result.success) {
-      console.log("Login bem-sucedido, redirecionando para /painel/dashboard")
-      router.push("/painel")
-    } else {
-      setError(result.error || "Falha na autenticação")
-      setIsLoading(false)
-    }
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    handleSubmit(() => login(values.email, values.password))
   }
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
       <Card className="w-full max-w-md">
@@ -120,3 +110,8 @@ export default function LoginPage() {
     </div>
   )
 }
+
+
+
+
+

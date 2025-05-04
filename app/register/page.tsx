@@ -18,6 +18,9 @@ import { useAuth } from "@/contexts/auth-context"
 const formSchema = z
   .object({
     email: z.string().email({ message: "Email inválido" }),
+    name: z.string(),
+    phone: z.string(),
+    document: z.string(),
     password: z.string().min(6, { message: "A senha deve ter pelo menos 6 caracteres" }),
     confirmPassword: z.string().min(6, { message: "A senha deve ter pelo menos 6 caracteres" }),
   })
@@ -37,26 +40,26 @@ export default function RegisterPage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
+      name: "",
       password: "",
       confirmPassword: "",
     },
   })
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setError(null)
     setSuccess(null)
     setIsLoading(true)
-
-    const result = await register(values.email, values.password)
-
+    const { email, name, phone, document, password } = values
+    const result = await register({ email, name, phone, document, password })
+    setIsLoading(false)
     if (result.success) {
-      setSuccess("Registro realizado com sucesso! Redirecionando para o login...")
+      setSuccess("Cadastro realizado com sucesso! Redirecionando para login...")
       setTimeout(() => {
         router.push("/login")
-      }, 2000)
+      }, 1500)
     } else {
-      setError(result.error || "Falha no registro")
-      setIsLoading(false)
+      setError(result.error || "Erro ao registrar")
     }
   }
 
@@ -88,6 +91,45 @@ export default function RegisterPage() {
                     <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input placeholder="seu@email.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nome completo</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Seu nome completo" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Telefone</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Somente numeros" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="document"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Documento</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Somente números" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

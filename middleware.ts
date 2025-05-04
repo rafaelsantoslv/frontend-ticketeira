@@ -8,7 +8,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const token = request.cookies.get("auth_token")?.value
+  const token = request.cookies.get("token")?.value
   const isAuthRoute = request.nextUrl.pathname.startsWith("/login") || request.nextUrl.pathname.startsWith("/register")
   const isPublicRoute = request.nextUrl.pathname === "/"
   const isPainelRoute = request.nextUrl.pathname.startsWith("/painel")
@@ -22,7 +22,7 @@ export function middleware(request: NextRequest) {
   // Se tentar acessar login/register com token, redireciona para painel
   if (token && isAuthRoute) {
     console.log("Redirecionando para /painel/dashboard: Usuário já autenticado tentando acessar login/register")
-    return NextResponse.redirect(new URL("/painel/dashboard", request.url))
+    return NextResponse.redirect(new URL("/painel", request.url))
   }
 
   return NextResponse.next()
