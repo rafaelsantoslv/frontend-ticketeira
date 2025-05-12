@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { CardEvent } from "@/components/card-event"
+import { PainelHeader } from "@/components/painel-header"
 
 // Tipos para os dados
 type Event = {
@@ -127,10 +128,7 @@ export default function EventosPage() {
         <div className="space-y-6">
             {/* Cabeçalho da página */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold tracking-tight">Meus Eventos</h1>
-                    <p className="text-muted-foreground">Gerencie todos os seus eventos em um só lugar</p>
-                </div>
+                <PainelHeader name={"Meus Eventos"} title={"Gerencie todos os seus eventos em um só lugar"} />
                 <div className="flex flex-col sm:flex-row gap-4">
                     <div className="relative">
                         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />

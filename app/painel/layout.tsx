@@ -2,37 +2,10 @@
 
 import type React from "react"
 
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { useAuth } from "@/contexts/auth-context"
 import Sidebar from "@/components/sidebar"
 import Header from "@/components/header"
 
 export default function PainelLayout({ children }: { children: React.ReactNode }) {
-  // const { user, isLoading } = useAuth()
-  // const router = useRouter()
-
-  // const isDevByPass = process.env.SKIP_AUTH === 'true';
-
-  // useEffect(() => {
-  //   console.log("PainelLayout - Estado de autenticação:", { isLoading, isAuthenticated: !!user })
-  //   if (!isLoading && !user) {
-  //     console.log("Usuário não autenticado, redirecionando para /login")
-  //     router.push("/login")
-  //   }
-  // }, [user, isLoading, router])
-
-  // if (isLoading) {
-  //   return (
-  //     <div className="flex h-screen w-full items-center justify-center">
-  //       <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
-  //     </div>
-  //   )
-  // }
-
-  // if (!user) {
-  //   return null
-  // }
 
   return (
     <div className="flex h-screen">

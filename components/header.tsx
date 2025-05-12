@@ -70,7 +70,21 @@ export default function Header() {
     if (paths.length > 1) {
       if (paths[1] === "dashboard") {
         breadcrumbs.push(<span key="dashboard">DASHBOARD</span>)
-      } else if (paths[1] === "eventos") {
+      } else if (paths[1] === "financeiro") {
+        breadcrumbs.push(
+          <Link href="/painel/eventos" key="eventos" className="hover:text-[#400041]">
+            FINANCEIRO
+          </Link>,
+        )
+      }
+      else if (paths[1] === "usuarios") {
+        breadcrumbs.push(
+          <Link href="/painel/eventos" key="eventos" className="hover:text-[#400041]">
+            USUARIOS
+          </Link>,
+        )
+      }
+      else if (paths[1] === "eventos") {
         breadcrumbs.push(
           <Link href="/painel/eventos" key="eventos" className="hover:text-[#400041]">
             EVENTOS
