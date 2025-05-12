@@ -9,28 +9,30 @@ import Sidebar from "@/components/sidebar"
 import Header from "@/components/header"
 
 export default function PainelLayout({ children }: { children: React.ReactNode }) {
-  const { user, isLoading } = useAuth()
-  const router = useRouter()
+  // const { user, isLoading } = useAuth()
+  // const router = useRouter()
 
-  useEffect(() => {
-    console.log("PainelLayout - Estado de autenticação:", { isLoading, isAuthenticated: !!user })
-    if (!isLoading && !user) {
-      console.log("Usuário não autenticado, redirecionando para /login")
-      router.push("/login")
-    }
-  }, [user, isLoading, router])
+  // const isDevByPass = process.env.SKIP_AUTH === 'true';
 
-  if (isLoading) {
-    return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
-      </div>
-    )
-  }
+  // useEffect(() => {
+  //   console.log("PainelLayout - Estado de autenticação:", { isLoading, isAuthenticated: !!user })
+  //   if (!isLoading && !user) {
+  //     console.log("Usuário não autenticado, redirecionando para /login")
+  //     router.push("/login")
+  //   }
+  // }, [user, isLoading, router])
 
-  if (!user) {
-    return null
-  }
+  // if (isLoading) {
+  //   return (
+  //     <div className="flex h-screen w-full items-center justify-center">
+  //       <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+  //     </div>
+  //   )
+  // }
+
+  // if (!user) {
+  //   return null
+  // }
 
   return (
     <div className="flex h-screen">

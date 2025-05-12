@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { CalendarDays, ChevronRight, Clock, DollarSign, LineChart, Plus, Ticket, Users } from "lucide-react"
+import { CalendarDays, Clock, DollarSign, Plus, Ticket } from "lucide-react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/contexts/auth-context"
@@ -39,7 +39,7 @@ export default function PainelPage() {
 
             {/* Cards de estatísticas */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <StatCard title="Total de Eventos" icon={<CalendarDays className="h-4 w-4 text-muted-foreground" />} value={isLoading ? "-" : stats.totalEvents} description={isLoading ? "" : `${stats.activeEvents} eventos ativos`} />
+                <StatCard title="Total de Eventos" icon={<CalendarDays className="h-4 w-4 text-muted-foreground" />} value={isLoading ? "-" : stats.activeEvents} description={isLoading ? "" : `eventos ativos`} />
                 <StatCard title="Ingressos Vendidos" icon={<Ticket className="h-4 w-4 text-muted-foreground" />} value={isLoading ? "-" : stats.totalTicketsSold} description="Em todos eventos" />
                 <StatCard title="Receita Total" icon={<DollarSign className="h-4 w-4 text-muted-foreground" />} value={isLoading ? "-" : formatCurrency(stats.totalRevenue)} description="De todos os eventos" />
                 <StatCard title="Próximo Evento" icon={<Clock className="h-4 w-4 text-muted-foreground" />} value={isLoading ? "-" : recentEvents.find((e) => e.status === "upcoming")?.date || "Nenhum"} description={isLoading ? "" : recentEvents.find((e) => e.status === "upcoming")?.title || "Nenhum evento agendado"} />

@@ -5,10 +5,12 @@ export function middleware(request: NextRequest) {
   const isDevByPass = process.env.SKIP_AUTH === 'true';
 
   if (isDevByPass) {
+    console.log('passei')
     return NextResponse.next();
   }
 
   const token = request.cookies.get("token")?.value
+  console.log("Resultado do token " + token)
   const isAuthRoute = request.nextUrl.pathname.startsWith("/login") || request.nextUrl.pathname.startsWith("/register")
   const isPublicRoute = request.nextUrl.pathname === "/"
   const isPainelRoute = request.nextUrl.pathname.startsWith("/painel")
