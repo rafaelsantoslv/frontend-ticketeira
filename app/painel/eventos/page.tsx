@@ -2,13 +2,11 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { PlusCircle, Search } from "lucide-react"
+import { PlusCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { CardEvent } from "@/components/card-event"
+import { CardEvent } from "@/components/eventos/card-event"
 import { PainelHeader } from "@/components/painel-header"
-import { EventSearch } from "@/components/event-search"
+import { EventSearch } from "@/components/eventos/event-search"
 
 // Tipos para os dados
 type Event = {
@@ -107,20 +105,7 @@ export default function EventosPage() {
     }, [searchTerm, events])
 
     // Função para renderizar o status do evento
-    const renderEventStatus = (status: string) => {
-        switch (status) {
-            case "active":
-                return <Badge className="bg-green-500">Ativo</Badge>
-            case "upcoming":
-                return <Badge className="bg-blue-500">Em breve</Badge>
-            case "completed":
-                return <Badge className="bg-gray-500">Concluído</Badge>
-            case "canceled":
-                return <Badge className="bg-red-500">Cancelado</Badge>
-            default:
-                return null
-        }
-    }
+
 
     return (
         <div className="space-y-6">

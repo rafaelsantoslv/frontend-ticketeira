@@ -1,7 +1,7 @@
 import { CalendarDays, MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardFooter } from "./ui/card";
-import { Button } from "./ui/button";
+import { Card, CardContent, CardFooter } from "../ui/card";
+import { Button } from "../ui/button";
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 
