@@ -2,15 +2,13 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { CalendarDays, MapPin, PlusCircle, Search } from "lucide-react"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
+import { PlusCircle, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { format } from "date-fns"
-import { ptBR } from "date-fns/locale"
 import { CardEvent } from "@/components/card-event"
 import { PainelHeader } from "@/components/painel-header"
+import { EventSearch } from "@/components/event-search"
 
 // Tipos para os dados
 type Event = {
@@ -129,24 +127,8 @@ export default function EventosPage() {
             {/* Cabeçalho da página */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <PainelHeader name={"Meus Eventos"} title={"Gerencie todos os seus eventos em um só lugar"} />
-                <div className="flex flex-col sm:flex-row gap-4">
-                    <div className="relative">
-                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                        <Input
-                            type="search"
-                            placeholder="Buscar eventos..."
-                            className="pl-8 w-full sm:w-[250px]"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
-                    </div>
-                    <Link href="/painel/eventos/novo">
-                        <Button className="bg-[#400041] hover:bg-[#5a105b]">
-                            <PlusCircle className="mr-2 h-4 w-4" />
-                            Criar Novo Evento
-                        </Button>
-                    </Link>
-                </div>
+                <EventSearch nameAction={"Criar Novo Evento"} searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+
             </div>
 
             {/* Lista de eventos em cards */}
