@@ -2,10 +2,10 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
 export function middleware(request: NextRequest) {
-  const isDevByPass = process.env.SKIP_AUTH === 'true';
+  const isDevByPass = false
 
   if (isDevByPass) {
-    console.log('passei')
+    console.log('passei ' + isDevByPass)
     return NextResponse.next();
   }
 

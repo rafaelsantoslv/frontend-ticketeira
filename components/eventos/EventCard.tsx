@@ -6,16 +6,12 @@ import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 
 export function EventCard({ event }) {
-    const renderEventStatus = (status: string) => {
+    const renderEventStatus = (status: boolean) => {
         switch (status) {
-            case "active":
+            case true:
                 return <Badge className="bg-green-500">Ativo</Badge>
-            case "upcoming":
-                return <Badge className="bg-blue-500">Em breve</Badge>
-            case "completed":
-                return <Badge className="bg-gray-500">Concluído</Badge>
-            case "canceled":
-                return <Badge className="bg-red-500">Cancelado</Badge>
+            case false:
+                return <Badge className="bg-red-500">Inativo</Badge>
             default:
                 return null
         }
@@ -28,7 +24,7 @@ export function EventCard({ event }) {
                     alt={event.title}
                     className="h-full w-full object-cover"
                 />
-                <div className="absolute top-2 right-2">{renderEventStatus(event.status)}</div>
+                <div className="absolute top-2 right-2">{renderEventStatus(event.isPublished)}</div>
             </div>
             <CardContent className="p-4">
                 <div className="flex items-start gap-3">
@@ -56,7 +52,7 @@ export function EventCard({ event }) {
             </CardContent>
             <CardFooter className="p-4 pt-0 border-t mt-2">
                 <div className="w-full flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">{event.soldQuantity} ingressos vendidos</span>
+                    <span className="text-sm text-muted-foreground">{event.soldQuantity > 0 ? event.soldQuantity + " Ingressos vendidos" : "Nenhum ingresso vendido"}</span>
                     <Button variant="ghost" size="sm" className="text-[#400041]">
                         Ver detalhes
                     </Button>

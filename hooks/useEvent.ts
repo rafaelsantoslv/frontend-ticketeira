@@ -1,4 +1,5 @@
 // hooks/useEvents.ts
+import { EventService } from '@/services/eventService'
 import { Event } from '@/types/event'
 import { useState, useEffect } from 'react'
 
@@ -9,6 +10,7 @@ export function useEvents() {
     const [filteredEvents, setFilteredEvents] = useState<Event[]>([])
     const [searchTerm, setSearchTerm] = useState("")
     const [isLoading, setIsLoading] = useState(true)
+    const eventService = new EventService()
 
     // Carregar eventos
     useEffect(() => {
@@ -23,40 +25,21 @@ export function useEvents() {
     // Função para buscar eventos
     const fetchEvents = async () => {
         try {
+            const token = localStorage.getItem("token")
             // Em um cenário real, isso seria uma chamada de API
             setTimeout(() => {
-                const mockEvents: Event[] = [
-                    {
-                        "id": "ea500a60-d573-45a3-a1a6-1bdf39e7cf2f",
-                        "title": "Rock Concert",
-                        "locationName": "Rock Arena",
-                        "locationCity": "Floripa",
-                        "locationState": "SC",
-                        "category": "Music",
-                        "imageUrl": "http://localhost:3000/teste",
-                        "isPublished": false,
-                        "isFeatured": false,
-                        "startDate": "2025-04-15T20:00:00",
-                        "soldQuantity": 100
-                    },
-                    {
-                        "id": "ea500a60-d573-45a3-a1a6-1bdf39e7cf22",
-                        "title": "Rock Concertt",
-                        "locationName": "Rock Arena",
-                        "locationCity": "Floripa",
-                        "locationState": "SC",
-                        "category": "Music",
-                        "imageUrl": "http://localhost:3000/teste",
-                        "isPublished": false,
-                        "isFeatured": false,
-                        "startDate": "2025-04-16T20:00:00",
-                        "soldQuantity": 200
-                    },
-                ]
+                eventService.getEventsMe(token).then((response) => {
+                    console.log(response.data.events)
+                    setEvents(response.data.events)
+                    setFilteredEvents(response.data.events)
+                    setIsLoading(false)
+                }).catch((error) => {
+                    console.log(error)
+                })
 
-                setEvents(mockEvents)
-                setFilteredEvents(mockEvents)
-                setIsLoading(false)
+                //setEvents(mockEvents)
+                //setFilteredEvents(mockEvents)
+                //setIsLoading(false)
             }, 1000)
         } catch (error) {
             console.error('Erro ao carregar eventos:', error)

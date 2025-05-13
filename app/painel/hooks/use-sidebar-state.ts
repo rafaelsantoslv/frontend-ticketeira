@@ -1,15 +1,17 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 export function useSidebarState() {
-    const [collapsed, setCollapsed] = useState<boolean>(() => {
-        if (typeof window !== 'undefined') {
-            const savedState = localStorage.getItem("sidebar-collapsed")
-            return savedState === "false"
+
+    const [collapsed, setCollapsed] = useState(true)
+
+    useEffect(() => {
+        const savedState = localStorage.getItem("sidebar-collapsed")
+        if (savedState !== null) {
+            setCollapsed(savedState === "true")
         }
-        return true
-    })
+    }, [])
 
 
     // Função para alternar o estado da sidebar
