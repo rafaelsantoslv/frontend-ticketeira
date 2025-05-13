@@ -24,7 +24,7 @@ import {
     QrCode,
     CreditCard,
 } from "lucide-react"
-import EventCreationForm from "@/components/eventos/event-creation-form"
+import EventCreationForm from "@/components/eventos/EventCreationFormProps"
 import { toast } from "@/components/ui/use-toast"
 import BatchManagementForm from "@/components/batch-management-form"
 import SectorManagementForm from "@/components/sector-management-form"
