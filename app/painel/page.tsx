@@ -8,7 +8,7 @@ import { useAuth } from "@/contexts/auth-context"
 import { usePainelData } from "./hooks/use-painel-data"
 import { formatCurrency } from "@/utils/formatCurrency"
 import { StatCard } from "@/components/stat-card"
-import { RecentEventCard } from "@/components/recent-event-card"
+import { RecentEventCard } from "@/components/eventos/EventRecentCard"
 
 
 
