@@ -63,7 +63,7 @@ export default function PainelPage() {
                         </div>
                     ) : (
                         <div className="space-y-4">
-                            {recentEvents.map((event) => (
+                            {recentEvents.slice(0, 5).map((event) => (
                                 <RecentEventCard key={event.id} id={event.id} date={event.date} ticketsSold={event.ticketsSold} status={event.status} title={event.title} totalRevenue={event.totalRevenue} />
 
                             ))}

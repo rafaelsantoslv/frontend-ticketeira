@@ -26,6 +26,34 @@ export const mockEvents = [
         totalRevenue: 5400,
         status: "completed",
     },
+    {
+        id: "4",
+        title: "SHOW DE ROCK - BANDAS LOCAIS",
+        date: "05/05/2023",
+        location: "Teatro Municipal, Blumenau",
+        ticketsSold: 180,
+        totalRevenue: 5400,
+        status: "completed",
+    },
+    {
+        id: "5",
+        title: "SHOW DE ROCK - BANDAS LOCAIS",
+        date: "05/05/2023",
+        location: "Teatro Municipal, Blumenau",
+        ticketsSold: 180,
+        totalRevenue: 5400,
+        status: "completed",
+    },
+    {
+        id: "6",
+        title: "SHOW DE ROCK - BANDAS LOCAIS",
+        date: "05/05/2023",
+        location: "Teatro Municipal, Blumenau",
+        ticketsSold: 180,
+        totalRevenue: 5400,
+        status: "completed",
+    },
+
 ]
 
 export const mockStats =

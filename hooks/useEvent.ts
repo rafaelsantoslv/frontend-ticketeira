@@ -27,54 +27,30 @@ export function useEvents() {
             setTimeout(() => {
                 const mockEvents: Event[] = [
                     {
-                        id: "1",
-                        title: "LA VIE GLOW PARTY - INAUGURAÇÃO",
-                        date: new Date("2023-06-15T22:00:00"),
-                        location: "Blumenau, SC",
-                        venue: "Club XYZ",
-                        status: "active",
-                        ticketsSold: 258,
-                        image: "/placeholder.svg?height=200&width=400",
+                        "id": "ea500a60-d573-45a3-a1a6-1bdf39e7cf2f",
+                        "title": "Rock Concert",
+                        "locationName": "Rock Arena",
+                        "locationCity": "Floripa",
+                        "locationState": "SC",
+                        "category": "Music",
+                        "imageUrl": "http://localhost:3000/teste",
+                        "isPublished": false,
+                        "isFeatured": false,
+                        "startDate": "2025-04-15T20:00:00",
+                        "soldQuantity": 100
                     },
                     {
-                        id: "2",
-                        title: "FESTIVAL DE VERÃO 2023",
-                        date: new Date("2023-12-20T18:00:00"),
-                        location: "Balneário Camboriú, SC",
-                        venue: "Praia Central",
-                        status: "upcoming",
-                        ticketsSold: 450,
-                        image: "/placeholder.svg?height=200&width=400",
-                    },
-                    {
-                        id: "3",
-                        title: "SHOW DE ROCK - BANDAS LOCAIS",
-                        date: new Date("2023-05-05T20:00:00"),
-                        location: "Blumenau, SC",
-                        venue: "Teatro Municipal",
-                        status: "completed",
-                        ticketsSold: 180,
-                        image: "/placeholder.svg?height=200&width=400",
-                    },
-                    {
-                        id: "4",
-                        title: "WORKSHOP DE FOTOGRAFIA",
-                        date: new Date("2023-04-10T14:00:00"),
-                        location: "Joinville, SC",
-                        venue: "Centro de Eventos",
-                        status: "canceled",
-                        ticketsSold: 45,
-                        image: "/placeholder.svg?height=200&width=400",
-                    },
-                    {
-                        id: "5",
-                        title: "FEIRA GASTRONÔMICA",
-                        date: new Date("2023-08-25T11:00:00"),
-                        location: "Florianópolis, SC",
-                        venue: "Parque Municipal",
-                        status: "upcoming",
-                        ticketsSold: 320,
-                        image: "/placeholder.svg?height=200&width=400",
+                        "id": "ea500a60-d573-45a3-a1a6-1bdf39e7cf22",
+                        "title": "Rock Concertt",
+                        "locationName": "Rock Arena",
+                        "locationCity": "Floripa",
+                        "locationState": "SC",
+                        "category": "Music",
+                        "imageUrl": "http://localhost:3000/teste",
+                        "isPublished": false,
+                        "isFeatured": false,
+                        "startDate": "2025-04-16T20:00:00",
+                        "soldQuantity": 200
                     },
                 ]
 
@@ -96,8 +72,8 @@ export function useEvents() {
             const filtered = events.filter(
                 (event) =>
                     event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    event.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    event.venue.toLowerCase().includes(searchTerm.toLowerCase()),
+                    event.locationName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    event.locationCity.toLowerCase().includes(searchTerm.toLowerCase()),
             )
             setFilteredEvents(filtered)
         }
