@@ -5,7 +5,7 @@ import { Button } from "../ui/button";
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 
-export function CardEvent({ event }) {
+export function EventCard({ event }) {
     const renderEventStatus = (status: string) => {
         switch (status) {
             case "active":

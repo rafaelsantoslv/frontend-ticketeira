@@ -12,6 +12,8 @@ export const EventStatusBadge = ({ status }: EventStatusBadgeProps) => {
             return <Badge className="bg-blue-500">Em breve</Badge>
         case "completed":
             return <Badge className="bg-gray-500">Concluído</Badge>
+        case "canceled":
+            return <Badge className="bg-red-500">Cancelado</Badge>
         default:
             return null
     }
