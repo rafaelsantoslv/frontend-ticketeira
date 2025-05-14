@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -13,9 +12,9 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { useAuth } from "@/contexts/auth-context"
-import { useFormSubmit } from "@/hooks/UseFormSubmit"
-import { AuthResponse } from "@/services/auth.service"
+import { useAuth2 } from "@/contexts/AuthContext"
+import { useFormSubmit } from "@/hooks/useFormSubmit"
+import { User } from "@/types/auth"
 
 const formSchema = z.object({
   email: z.string().email({ message: "Email inválido" }),
@@ -24,8 +23,8 @@ const formSchema = z.object({
 
 export default function LoginPage() {
   const router = useRouter()
-  const { login } = useAuth()
-  const { isLoading, error, handleSubmit } = useFormSubmit<AuthResponse>({
+  const { login } = useAuth2()
+  const { isLoading, error, handleSubmit } = useFormSubmit<User>({
     onSuccess: () => router.push("/painel")
   })
 
@@ -37,7 +36,7 @@ export default function LoginPage() {
     },
   })
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    handleSubmit(() => login(values.email, values.password))
+    handleSubmit(() => login({ email: values.email, password: values.password }))
   }
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">

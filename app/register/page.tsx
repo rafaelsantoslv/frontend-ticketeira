@@ -13,7 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { useAuth } from "@/contexts/auth-context"
+import { useAuth2 } from "@/contexts/AuthContext"
 
 const formSchema = z
   .object({
@@ -30,7 +30,7 @@ const formSchema = z
   })
 
 export default function RegisterPage() {
-  const { register } = useAuth()
+  const { register } = useAuth2()
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)

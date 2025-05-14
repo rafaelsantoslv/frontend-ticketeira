@@ -37,9 +37,10 @@ export const authService = {
             }
 
         } catch (error: any) {
+            console.log("deu esse erro: " + error)
             return {
                 success: false,
-                error: error.response?.data?.message || 'erro ao fazer login'
+                error: error.response?.data?.message || 'Ocorreu um problema ao tentar fazer login'
             }
         }
     },

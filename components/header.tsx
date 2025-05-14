@@ -14,13 +14,13 @@ import {
 import { useRouter, usePathname } from "next/navigation"
 import { toast } from "@/components/ui/use-toast"
 import { ToastAction } from "@/components/ui/toast"
-import { useAuth } from "@/contexts/auth-context"
+import { useAuth2 } from "@/contexts/AuthContext"
 import Link from "next/link"
 
 export default function Header() {
   const router = useRouter()
   const pathname = usePathname()
-  const { logout, user } = useAuth()
+  const { user } = useAuth2()
   const [isOpen, setIsOpen] = useState(false)
 
   const handleSettings = () => {
@@ -33,15 +33,15 @@ export default function Header() {
     router.push("/painel/configuracoes")
   }
 
-  const handleLogout = () => {
-    setIsOpen(false)
-    logout()
-    toast({
-      title: "Logout",
-      description: "Você foi desconectado com sucesso.",
-      action: <ToastAction altText="Fechar">Fechar</ToastAction>,
-    })
-  }
+  // const handleLogout = () => {
+  //   setIsOpen(false)
+  //   logout()
+  //   toast({
+  //     title: "Logout",
+  //     description: "Você foi desconectado com sucesso.",
+  //     action: <ToastAction altText="Fechar">Fechar</ToastAction>,
+  //   })
+  // }
 
   // Get initials from email
   const getInitials = () => {
@@ -140,7 +140,7 @@ export default function Header() {
               <span>Configurações</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-500">
+            <DropdownMenuItem className="cursor-pointer text-red-500">
               <LogOut className="mr-2 h-4 w-4" />
               <span>Logout</span>
             </DropdownMenuItem>
