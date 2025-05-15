@@ -32,7 +32,6 @@ export function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
   const token = request.cookies.get("token")?.value;
-  console.log("Esse é o token: " + token)
 
   const isAuthRoute = (path: string): boolean => {
     return Object.values(ROUTES).some(

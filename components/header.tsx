@@ -20,7 +20,7 @@ import Link from "next/link"
 export default function Header() {
   const router = useRouter()
   const pathname = usePathname()
-  const { user } = useAuth2()
+  const { user, logout } = useAuth2()
   const [isOpen, setIsOpen] = useState(false)
 
   const handleSettings = () => {
@@ -33,15 +33,15 @@ export default function Header() {
     router.push("/painel/configuracoes")
   }
 
-  // const handleLogout = () => {
-  //   setIsOpen(false)
-  //   logout()
-  //   toast({
-  //     title: "Logout",
-  //     description: "Você foi desconectado com sucesso.",
-  //     action: <ToastAction altText="Fechar">Fechar</ToastAction>,
-  //   })
-  // }
+  const handleLogout = () => {
+    setIsOpen(false)
+    logout()
+    toast({
+      title: "Logout",
+      description: "Você foi desconectado com sucesso.",
+      action: <ToastAction altText="Fechar">Fechar</ToastAction>,
+    })
+  }
 
   // Get initials from email
   const getInitials = () => {
@@ -140,7 +140,7 @@ export default function Header() {
               <span>Configurações</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer text-red-500">
+            <DropdownMenuItem className="cursor-pointer text-red-500" onClick={handleLogout}>
               <LogOut className="mr-2 h-4 w-4" />
               <span>Logout</span>
             </DropdownMenuItem>

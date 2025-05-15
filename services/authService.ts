@@ -28,7 +28,25 @@ export class AuthService {
         }
     }
 
+    public async validateToken(): Promise<ApiResponse<User>> {
+        try {
+            const response = await axiosInstance.post("/auth/validate-token")
+            return { success: true, data: response.data }
+        } catch (error: any) {
+            return {
+                success: false,
+                error: error.response?.data?.message || "Ocorreu um erro inesperado"
+            }
+        }
+
+    }
+
     public async register(registerData: RegisterData) {
         return axiosInstance.post("/auth/register", registerData)
     }
+
+    public async logout(): Promise<void> {
+        return axiosInstance.post("/auth/logout")
+    }
+
 }
