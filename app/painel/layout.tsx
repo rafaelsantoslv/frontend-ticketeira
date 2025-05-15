@@ -2,8 +2,8 @@
 
 import type React from "react"
 
-import Sidebar from "@/components/sidebar"
-import Header from "@/components/header"
+import Sidebar from "@/components/Sidebar"
+import Header from "@/components/Header"
 
 export default function PainelLayout({ children }: { children: React.ReactNode }) {
 

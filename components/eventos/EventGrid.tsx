@@ -1,7 +1,7 @@
 // components/eventos/EventsGrid.tsx
 import Link from 'next/link';
 import { EventCard } from './EventCard';
-import { Event } from '@/types/event';
+import { Event } from '@/types/Event';
 
 interface EventsGridProps {
     events: Event[];

@@ -2,9 +2,9 @@
 
 import Link from "next/link"
 import { CalendarSearch, FileText, LayoutDashboard, MessageCircle, User, Wallet } from "lucide-react"
-import { useSidebarState } from "@/app/painel/hooks/use-sidebar-state"
+import { useSidebarState } from "@/hooks/use-sidebar-state"
 import { cn } from "@/lib/utils"
-import { SideBarItem } from "./sidebar-item"
+import { SideBarItem } from "./SidebarItem"
 
 export default function Sidebar() {
   const { collapsed, toggleSidebar } = useSidebarState()

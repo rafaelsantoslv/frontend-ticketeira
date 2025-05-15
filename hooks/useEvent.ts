@@ -1,6 +1,6 @@
 // hooks/useEvents.ts
 import { EventService } from '@/services/eventService'
-import { Event } from '@/types/event'
+import { Event } from '@/types/Event'
 import { useState, useEffect } from 'react'
 
 

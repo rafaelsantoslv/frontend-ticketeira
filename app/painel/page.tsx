@@ -5,9 +5,9 @@ import { CalendarDays, Clock, DollarSign, Plus, Ticket } from "lucide-react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useAuth2 } from "@/contexts/AuthContext"
-import { usePainelData } from "./hooks/use-painel-data"
+import { usePainelData } from "../../hooks/usePainelData"
 import { formatCurrency } from "@/utils/formatCurrency"
-import { StatCard } from "@/components/stat-card"
+import { StatCard } from "@/components/StatCard"
 import { RecentEventCard } from "@/components/eventos/EventRecentCard"
 
 

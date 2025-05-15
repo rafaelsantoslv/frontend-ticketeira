@@ -1,5 +1,5 @@
-import { useIsActive } from "@/app/painel/hooks/use-is-active"
-import { useSidebarState } from "@/app/painel/hooks/use-sidebar-state"
+import { useIsActive } from "@/hooks/use-is-active"
+import { useSidebarState } from "@/hooks/use-sidebar-state"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { ReactNode } from "react"

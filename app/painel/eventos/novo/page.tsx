@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { Card } from "@/components/ui/card"
 import { toast } from "@/components/ui/use-toast"
 
-import CreateEventDialog from "@/components/EventCreateDialog"
+import CreateEventDialog from "@/components/eventos/EventCreateDialog"
 
 export default function NovoEventoPage() {
     const router = useRouter()

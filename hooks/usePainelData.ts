@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { EventSummary, StatsSummary } from "../types/painel-types"
+import { EventSummary, StatsSummary } from "../types/PainelType"
 import { mockEvents, mockStats } from "../mock/painel"
 import { useAuth2 } from "@/contexts/AuthContext"
 

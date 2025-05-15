@@ -14,7 +14,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useAuth2 } from "@/contexts/AuthContext"
 import { useFormSubmit } from "@/hooks/useFormSubmit"
-import { User } from "@/types/auth"
+import { User } from "@/types/Auth"
 
 const formSchema = z.object({
   email: z.string().email({ message: "Email inválido" }),

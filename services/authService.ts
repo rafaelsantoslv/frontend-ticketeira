@@ -1,6 +1,6 @@
-import { Credentials, RegisterData, User } from "@/types/auth";
+import { Credentials, RegisterData, User } from "@/types/Auth";
 import { axiosInstance } from "./apiConfig";
-import { ApiResponse } from "@/types/api";
+import { ApiResponse } from "@/types/Api";
 
 
 export class AuthService {

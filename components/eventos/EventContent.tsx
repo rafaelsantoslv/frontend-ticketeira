@@ -1,8 +1,8 @@
 // components/eventos/EventContent.tsx
-import { LoadingSpinner } from '../loading-spinner';
+import { LoadingSpinner } from '../LoadingSpinner';
 import { EventEmptyList } from './EventEmptyList';
 import { EventsGrid } from './EventGrid';
-import { Event } from '@/types/event';
+import { Event } from '@/types/Event';
 
 interface EventContentProps {
     isLoading: boolean;

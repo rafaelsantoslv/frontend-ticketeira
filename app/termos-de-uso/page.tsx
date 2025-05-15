@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import CreateEventDialog from "@/components/EventCreateDialog"
+import CreateEventDialog from "@/components/eventos/EventCreateDialog"
 
 export default function TermosDeUso() {
     return (

@@ -1,4 +1,4 @@
-import { ApiResponse, BaseServiceState } from "@/types/api"
+import { ApiResponse, BaseServiceState } from "@/types/Api"
 import { useState } from "react"
 
 interface UseFormSubmitOptions<T> {

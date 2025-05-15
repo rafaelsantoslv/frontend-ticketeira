@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
-import { Route } from "./types/middlewareType"
+import { Route } from "./types/MiddlewareType"
 
 const ROUTES: Record<string, Route> = {
   home: {

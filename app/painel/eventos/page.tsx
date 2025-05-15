@@ -1,9 +1,9 @@
 "use client"
 
-import { PainelHeader } from "@/components/painel-header"
+import { PainelHeader } from "@/components/PainelHeader"
 import { EventSearch } from "@/components/eventos/EventSearch"
 import { useEvents } from "@/hooks/useEvent"
-import { LoadingSpinner } from "@/components/loading-spinner"
+import { LoadingSpinner } from "@/components/LoadingSpinner"
 import { EventEmptyList } from "@/components/eventos/EventEmptyList"
 import { EventsGrid } from "@/components/eventos/EventGrid"
 

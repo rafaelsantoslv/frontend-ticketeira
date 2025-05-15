@@ -1,8 +1,8 @@
 "use client"
 
 import { AuthService } from "@/services/authService";
-import { ApiResponse } from "@/types/api";
-import { Credentials, User } from "@/types/auth";
+import { ApiResponse } from "@/types/Api";
+import { Credentials, User } from "@/types/Auth";
 import { useRouter } from "next/navigation";
 import { createContext, ReactNode, useContext, useState } from "react";
 
