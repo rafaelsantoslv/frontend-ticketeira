@@ -121,7 +121,7 @@ export default function Header() {
       <div className="text-sm text-gray-600">{generateBreadcrumb()}</div>
       <div className="flex items-center">
         <div className="text-right mr-3">
-          <div className="text-sm font-semibold">Olá, {user?.email ? user.email.split("@")[0] : "Usuário"}</div>
+          <div className="text-sm font-semibold">Olá, {user?.name ? user.name : "Usuário"}</div>
           <div className="text-xs text-gray-500">{user?.email}</div>
         </div>
         <Avatar className="h-10 w-10">

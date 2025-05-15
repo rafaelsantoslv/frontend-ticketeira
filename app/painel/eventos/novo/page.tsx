@@ -3,13 +3,9 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ArrowLeft } from "lucide-react"
 import { toast } from "@/components/ui/use-toast"
-import Link from "next/link"
 
-// Importar o formulário de criação de evento
-import EventCreationForm from "@/components/eventos/EventCreationFormProps"
+import CreateEventDialog from "@/components/EventCreateDialog"
 
 export default function NovoEventoPage() {
     const router = useRouter()
@@ -17,7 +13,6 @@ export default function NovoEventoPage() {
 
     const handleCreateEvent = (data: any) => {
         // Em um cenário real, aqui você enviaria os dados para a API
-        console.log("Dados do evento:", data)
 
         // Simular criação bem-sucedida
         toast({
@@ -38,16 +33,9 @@ export default function NovoEventoPage() {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-bold tracking-tight">Criar Novo Evento</h1>
-                <Link href="/painel/eventos">
-                    <Button variant="outline">
-                        <ArrowLeft className="mr-2 h-4 w-4" />
-                        Voltar para Eventos
-                    </Button>
-                </Link>
             </div>
-
             <Card className="p-6">
-                <EventCreationForm isOpen={isFormOpen} onClose={handleCancel} onSubmit={handleCreateEvent} />
+                <CreateEventDialog isOpen={isFormOpen} onClose={handleCancel} />
             </Card>
         </div>
     )

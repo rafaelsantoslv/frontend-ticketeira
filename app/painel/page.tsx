@@ -24,7 +24,7 @@ export default function PainelPage() {
                 <div>
                     <h1 className="text-2xl font-bold tracking-tight">Bem-vindo ao Painel</h1>
                     <p className="text-muted-foreground">
-                        Olá, {user?.email ? user.email.split("@")[0] : "Usuário"}! Aqui está uma visão geral dos seus eventos.
+                        Olá, {user?.name ? user.name : "Usuário"}! Aqui está uma visão geral dos seus eventos ativos.
                     </p>
                 </div>
                 <div className="mt-4 md:mt-0">
@@ -39,10 +39,78 @@ export default function PainelPage() {
 
             {/* Cards de estatísticas */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <StatCard title="Total de Eventos" icon={<CalendarDays className="h-4 w-4 text-muted-foreground" />} value={isLoading ? "-" : stats.activeEvents} description={isLoading ? "" : `eventos ativos`} />
-                <StatCard title="Ingressos Vendidos" icon={<Ticket className="h-4 w-4 text-muted-foreground" />} value={isLoading ? "-" : stats.totalTicketsSold} description="Em todos eventos" />
-                <StatCard title="Receita Total" icon={<DollarSign className="h-4 w-4 text-muted-foreground" />} value={isLoading ? "-" : formatCurrency(stats.totalRevenue)} description="De todos os eventos" />
-                <StatCard title="Próximo Evento" icon={<Clock className="h-4 w-4 text-muted-foreground" />} value={isLoading ? "-" : recentEvents.find((e) => e.status === "upcoming")?.date || "Nenhum"} description={isLoading ? "" : recentEvents.find((e) => e.status === "upcoming")?.title || "Nenhum evento agendado"} />
+                <StatCard
+                    title="Eventos Ativos"
+                    icon={<CalendarDays className="h-4 w-4 text-muted-foreground" />}
+                    value={
+                        isLoading
+                            ? "-"
+                            : stats.activeEvents > 0
+                                ? stats.activeEvents
+                                : "Nenhum evento ativo"
+                    }
+                    description={
+                        isLoading
+                            ? ""
+                            : stats.activeEvents > 0
+                                ? `${stats.activeEvents} atualmente`
+                                : "Você ainda não possui eventos ativos"
+                    }
+                />
+
+                <StatCard
+                    title="Ingressos Vendidos"
+                    icon={<Ticket className="h-4 w-4 text-muted-foreground" />}
+                    value={
+                        isLoading
+                            ? "-"
+                            : stats.totalTicketsSold > 0
+                                ? stats.totalTicketsSold
+                                : "Nenhum ingresso vendido"
+                    }
+                    description={
+                        isLoading
+                            ? ""
+                            : stats.totalTicketsSold > 0
+                                ? "Ingressos vendidos em eventos ativos"
+                                : "Nenhum ingresso foi vendido ainda"
+                    }
+                />
+
+                <StatCard
+                    title="Receita Total"
+                    icon={<DollarSign className="h-4 w-4 text-muted-foreground" />}
+                    value={
+                        isLoading
+                            ? "-"
+                            : stats.totalRevenue > 0
+                                ? formatCurrency(stats.totalRevenue)
+                                : "R$ 0,00"
+                    }
+                    description={
+                        isLoading
+                            ? ""
+                            : stats.totalRevenue > 0
+                                ? "Receita gerada por eventos ativos"
+                                : "Sem receita gerada até agora"
+                    }
+                />
+
+                <StatCard
+                    title="Próximo Evento"
+                    icon={<Clock className="h-4 w-4 text-muted-foreground" />}
+                    value={
+                        isLoading
+                            ? "-"
+                            : recentEvents.find((e) => e.status === "upcoming")?.date || "Nenhum"
+                    }
+                    description={
+                        isLoading
+                            ? ""
+                            : recentEvents.find((e) => e.status === "upcoming")?.title || "Nenhum evento agendado"
+                    }
+                />
+
             </div>
 
 

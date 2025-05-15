@@ -58,8 +58,8 @@ export const mockEvents = [
 
 export const mockStats =
 {
-    totalEvents: 3,
-    activeEvents: 1,
-    totalTicketsSold: 888,
-    totalRevenue: 40480,
+    totalEvents: 0,
+    activeEvents: 0,
+    totalTicketsSold: 0,
+    totalRevenue: 0,
 }
