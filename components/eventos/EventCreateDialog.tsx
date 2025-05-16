@@ -55,8 +55,8 @@ export function CreateEventDialog({ isOpen, onClose }) {
             <DialogTrigger asChild>
                 <Button size="lg">Criar Novo Evento</Button>
             </DialogTrigger>
-            <DialogContent className="w-[800px] max-w-screen-lg">
-                <DialogHeader>
+            <DialogContent className="w-[800px]  p-6 max-w-screen-lg">
+                <DialogHeader className="px-1">
                     <DialogTitle>Criar Novo Evento</DialogTitle>
                     <DialogDescription>Preencha os detalhes do seu evento. Clique em salvar quando terminar.</DialogDescription>
                 </DialogHeader>
@@ -86,7 +86,7 @@ export function CreateEventDialog({ isOpen, onClose }) {
                                     </TabsTrigger>
                                 </TabsList>
 
-                                <div className="mt-4 h-[400px] overflow-y-auto">
+                                <div className="mt-4 h-[400px] overflow-y-auto px-1">
                                     <TabsContent value="details" className="space-y-4 pt-2 h-full">
                                         <FormField
                                             control={form.control}
@@ -230,7 +230,7 @@ export function CreateEventDialog({ isOpen, onClose }) {
                                                                     </Button>
                                                                 </FormControl>
                                                             </PopoverTrigger>
-                                                            <PopoverContent className="w-auto p-0" align="start">
+                                                            <PopoverContent className="w-auto p-0" align="start" side="bottom">
                                                                 <Calendar
                                                                     mode="single"
                                                                     selected={field.value}
@@ -294,7 +294,7 @@ export function CreateEventDialog({ isOpen, onClose }) {
                                                                     </Button>
                                                                 </FormControl>
                                                             </PopoverTrigger>
-                                                            <PopoverContent className="w-auto p-0" align="start">
+                                                            <PopoverContent className="w-auto p-0" align="start" side="bottom">
                                                                 <Calendar
                                                                     mode="single"
                                                                     selected={field.value}
@@ -427,7 +427,7 @@ export function CreateEventDialog({ isOpen, onClose }) {
                                 </div>
                             </Tabs>
 
-                            <DialogFooter>
+                            <DialogFooter className="px-1">
                                 <Button
                                     type="button"
                                     variant="outline"
