@@ -1,6 +1,4 @@
 "use client"
-
-import { useState } from "react"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { CalendarIcon, MapPin } from "lucide-react"
@@ -25,7 +23,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 import { useEventForm } from "@/hooks/useEventForm"
 import { useFormErrors } from "@/hooks/useEventFormError"
-import { EditTextMenuBar } from "@/components/EditTextMenuBar"
+import { RichTextEditor } from "../EditTextMenuBar"
 
 export function CreateEventDialog({ isOpen, onClose }) {
 
@@ -34,10 +32,8 @@ export function CreateEventDialog({ isOpen, onClose }) {
         formState,
         handleSubmit,
         resetForm,
-        htmlDescription,
         setHtmlDescription,
         formSubmitted,
-        setFormSubmitted,
     } = useEventForm()
 
     const { errors } = formState
@@ -86,7 +82,7 @@ export function CreateEventDialog({ isOpen, onClose }) {
                                     </TabsTrigger>
                                 </TabsList>
 
-                                <div className="mt-4 h-[400px] overflow-y-auto px-1">
+                                <div className="mt-4 h-[420px] overflow-y-auto px-1">
                                     <TabsContent value="details" className="space-y-4 pt-2 h-full">
                                         <FormField
                                             control={form.control}
@@ -141,14 +137,14 @@ export function CreateEventDialog({ isOpen, onClose }) {
                                                 <FormItem>
                                                     <FormLabel>Descrição</FormLabel>
                                                     <FormControl>
-                                                        <EditTextMenuBar content={field.value} onChange={setHtmlDescription} />
+                                                        <RichTextEditor content={field.value} onChange={setHtmlDescription} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
                                         />
 
-                                        <div className="grid grid-cols-2 gap-4">
+                                        <div className="grid grid-cols-2 gap-4 pb-6">
                                             <FormField
                                                 control={form.control}
                                                 name="category"
@@ -161,7 +157,7 @@ export function CreateEventDialog({ isOpen, onClose }) {
                                                                     <SelectValue placeholder="Selecione" />
                                                                 </SelectTrigger>
                                                             </FormControl>
-                                                            <SelectContent>
+                                                            <SelectContent position="popper" sideOffset={5} align="start" side="bottom">
                                                                 <SelectItem value="Music">Música</SelectItem>
                                                                 <SelectItem value="Sports">Esportes</SelectItem>
                                                                 <SelectItem value="Arts">Artes</SelectItem>
@@ -187,7 +183,7 @@ export function CreateEventDialog({ isOpen, onClose }) {
                                                                     <SelectValue placeholder="Selecione" />
                                                                 </SelectTrigger>
                                                             </FormControl>
-                                                            <SelectContent>
+                                                            <SelectContent position="popper" sideOffset={5} align="start" side="bottom">
                                                                 <SelectItem value="Livre">Livre</SelectItem>
                                                                 <SelectItem value="10+">10+</SelectItem>
                                                                 <SelectItem value="12+">12+</SelectItem>
@@ -230,7 +226,7 @@ export function CreateEventDialog({ isOpen, onClose }) {
                                                                     </Button>
                                                                 </FormControl>
                                                             </PopoverTrigger>
-                                                            <PopoverContent className="w-auto p-0" align="start" side="bottom">
+                                                            <PopoverContent className="w-auto p-0" align="start" side="bottom" sideOffset={5}>
                                                                 <Calendar
                                                                     mode="single"
                                                                     selected={field.value}
@@ -294,7 +290,7 @@ export function CreateEventDialog({ isOpen, onClose }) {
                                                                     </Button>
                                                                 </FormControl>
                                                             </PopoverTrigger>
-                                                            <PopoverContent className="w-auto p-0" align="start" side="bottom">
+                                                            <PopoverContent className="w-auto p-0" align="start" side="bottom" sideOffset={5}>
                                                                 <Calendar
                                                                     mode="single"
                                                                     selected={field.value}
