@@ -12,7 +12,7 @@ export const eventFormSchema = z.object({
     locationCity: z.string().min(2, { message: "Informe a cidade" }),
     locationState: z.string().length(2, { message: "Use a sigla do estado (2 letras)" }),
     locationZip: z.string().min(8, { message: "Informe um CEP válido" }),
-    bannerImage: z.string().optional(),
+    bannerImage: z.any().refine(file => file instanceof File, { message: "Selecione uma imagem válida" }),
 })
     .refine(
         (data) => data.endDate >= data.startDate,

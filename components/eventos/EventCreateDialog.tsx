@@ -98,14 +98,8 @@ export function CreateEventDialog({ isOpen, onClose }) {
                                                                 accept="image/*"
                                                                 className="cursor-pointer"
                                                                 onChange={(e) => {
-                                                                    const file = e.target.files?.[0]
-                                                                    if (file) {
-                                                                        const reader = new FileReader()
-                                                                        reader.onload = (event) => {
-                                                                            field.onChange(event.target?.result)
-                                                                        }
-                                                                        reader.readAsDataURL(file)
-                                                                    }
+                                                                    const file = e.target.files?.[0] || null;
+                                                                    form.setValue("bannerImage", file);
                                                                 }}
                                                             />
                                                         </div>

@@ -4,6 +4,9 @@ import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { eventFormSchema, type EventFormValues } from "@/schemas/eventCreateSchema"
+import { EventService } from "@/services/eventService"
+
+const eventService = new EventService()
 
 export function useEventForm() {
     const [htmlDescription, setHtmlDescription] = useState("")
@@ -33,7 +36,18 @@ export function useEventForm() {
         }
     }, [htmlDescription, form])
 
-    const onSubmit = (values: EventFormValues) => {
+    const onSubmit = async (values: EventFormValues) => {
+
+        try {
+            const response = await eventService.createEventMe(values)
+
+            const sendImage = await eventService.uploadImagem(response.data.imageUrl, values.bannerImage)
+            console.log(sendImage)
+        } catch (error) {
+            console.log("deu erro " + error)
+        }
+
+
         console.log(values)
         // Aqui você pode enviar os dados para sua API
         alert("Evento criado com sucesso!")

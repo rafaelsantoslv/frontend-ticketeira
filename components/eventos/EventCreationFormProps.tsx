@@ -15,14 +15,9 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useEventForm } from "@/hooks/useEventForm"
-import { DateTimeFields } from "../DateTimeFields"
-import { DateRangePicker } from "@/components/ui/date-range-picker"
-import { Popover, PopoverContent } from "../ui/popover"
-import { PopoverTrigger } from "@radix-ui/react-popover"
-import { CalendarIcon } from "lucide-react"
-import { Calendar } from "../ui/calendar"
+// import { DateTimeFields } from "../DateTimeFields"
+
 import { useState } from "react"
-import { cn } from "@/lib/utils"
 
 
 
@@ -66,10 +61,6 @@ export default function EventCreationForm({ isOpen, onClose, onSubmit, initialDa
                   </FormItem>
                 )}
               />
-
-              {/* Date - Simplified to text input */}
-
-              <DateTimeFields control={form.control} namePrefix="start" />
 
               {/* Venue Name */}
               <FormField
@@ -122,7 +113,7 @@ export default function EventCreationForm({ isOpen, onClose, onSubmit, initialDa
                   <FormItem className="md:col-span-2">
                     <FormLabel>Estado</FormLabel>
                     <FormControl>
-                      <Input placeholder="Ex: SantaCatarina" {...field} />
+                      <Input placeholder="Ex: Santa Catarina" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -208,94 +199,6 @@ export default function EventCreationForm({ isOpen, onClose, onSubmit, initialDa
                   </FormItem>
                 )}
               />
-
-              {/* Image */}
-              {/* <FormField
-                  control={form.control}
-                  name="image"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Imagem do Evento</FormLabel>
-                      <FormControl>
-                        <div className="flex flex-col gap-2">
-                          <div className="flex items-center gap-2">
-                            <Input
-                              type="file"
-                              accept="image/*"
-                              id="event-image"
-                              className="hidden"
-                              onChange={(e) => handleImageChange(e, "image")}
-                            />
-                            <Button
-                              type="button"
-                              variant="outline"
-                              onClick={() => document.getElementById("event-image")?.click()}
-                              className="w-full"
-                            >
-                              <Upload className="mr-2 h-4 w-4" />
-                              Selecionar Imagem
-                            </Button>
-                          </div>
-                          {imagePreview && (
-                            <div className="mt-2 relative w-full h-[150px] rounded-md overflow-hidden">
-                              <img
-                                src={imagePreview || "/placeholder.svg"}
-                                alt="Preview"
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                          )}
-                        </div>
-                      </FormControl>
-                      <FormDescription>Imagem principal do evento.</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                /> */}
-
-              {/* Cover Image */}
-              {/* <FormField
-                  control={form.control}
-                  name="coverImage"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Imagem de Capa</FormLabel>
-                      <FormControl>
-                        <div className="flex flex-col gap-2">
-                          <div className="flex items-center gap-2">
-                            <Input
-                              type="file"
-                              accept="image/*"
-                              id="cover-image"
-                              className="hidden"
-                              onChange={(e) => handleImageChange(e, "coverImage")}
-                            />
-                            <Button
-                              type="button"
-                              variant="outline"
-                              onClick={() => document.getElementById("cover-image")?.click()}
-                              className="w-full"
-                            >
-                              <ImageIcon className="mr-2 h-4 w-4" />
-                              Selecionar Capa
-                            </Button>
-                          </div>
-                          {coverImagePreview && (
-                            <div className="mt-2 relative w-full h-[150px] rounded-md overflow-hidden">
-                              <img
-                                src={coverImagePreview || "/placeholder.svg"}
-                                alt="Preview"
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                          )}
-                        </div>
-                      </FormControl>
-                      <FormDescription>Imagem de capa para o evento.</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                /> */}
             </div>
 
             <DialogFooter>
