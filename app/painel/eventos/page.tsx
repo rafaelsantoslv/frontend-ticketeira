@@ -6,6 +6,7 @@ import { useEvents } from "@/hooks/useEvent"
 import { LoadingSpinner } from "@/components/LoadingSpinner"
 import { EventEmptyList } from "@/components/eventos/EventEmptyList"
 import { EventsGrid } from "@/components/eventos/EventGrid"
+import { Pagination } from "@/components/ui/pagination"
 
 
 export default function EventosPage() {
@@ -28,7 +29,11 @@ export default function EventosPage() {
             ) : filteredEvents.length === 0 ? (
                 <EventEmptyList searchTerm={searchTerm} />
             ) : (
-                <EventsGrid events={filteredEvents} />
+                <>
+                    <EventsGrid events={filteredEvents} />
+                    <Pagination currentPage={1} itemsPerPage={9} totalItems={18} totalPages={2} onPageChange={() => { }} />
+                </>
+
             )}
         </div>
     )
