@@ -2,16 +2,27 @@
 import { EventService } from '@/services/eventService'
 import { useState, useEffect, useMemo } from 'react'
 
-const ITEMS_PER_PAGE = 9
 
-export function useEvents(itemsPerPage = 9) {
+export function useEvents() {
     const [events, setEvents] = useState([]);
     const [filteredEvents, setFilteredEvents] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("")
-    const [currentPage, setCurrentPage] = useState(1)
-    const [paginatedEvents, setPaginatedEvents] = useState<Event[]>([])
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
+    const [itemsPerPage, setItemsPerPage] = useState(9);
+
     const eventService = new EventService()
+
+    useEffect(() => {
+        fetchEvents()
+    }, [page])
+
+    // Filtrar eventos
+    useEffect(() => {
+        filterEvents()
+    }, [searchTerm, events])
 
     const filterEvents = () => {
         if (searchTerm.trim() === "") {
@@ -25,27 +36,19 @@ export function useEvents(itemsPerPage = 9) {
             )
             setFilteredEvents(filtered)
         }
-        setCurrentPage(1)
     }
 
-    // Carregar eventos
-    useEffect(() => {
-        fetchEvents()
-    }, [])
-
-    // Filtrar eventos
-    useEffect(() => {
-        filterEvents()
-    }, [searchTerm, events])
-
-    // Função para buscar eventos
     const fetchEvents = async () => {
         setIsLoading(true)
-        const result = await eventService.getEventsMe()
+        const backendPage = page - 1;
+        const result = await eventService.getEventsMe({ page: backendPage, limit: itemsPerPage })
 
         if (result.success && result.data) {
-            console.log("validei e deu certo")
+            console.log(page)
             setEvents(result.data.events)
+            setTotalPages(result.data.pagination.pages);
+            setTotalItems(result.data.pagination.total);
+            setItemsPerPage(result.data.pagination.limit)
 
             setFilteredEvents(result.data.events)
             setIsLoading(false)
@@ -56,23 +59,10 @@ export function useEvents(itemsPerPage = 9) {
         setIsLoading(false)
     }
 
+    const handlePageChange = (newPage) => {
+        setPage(newPage);
+    };
 
-    useEffect(() => {
-        const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
-        const endIndex = startIndex + ITEMS_PER_PAGE
-        setPaginatedEvents(filteredEvents.slice(startIndex, endIndex))
-
-        // Rolar para o topo quando mudar de página
-        if (typeof window !== "undefined") {
-            window.scrollTo({ top: 0, behavior: "smooth" })
-        }
-    }, [currentPage, filteredEvents])
-
-    const totalPages = Math.ceil(filteredEvents.length / ITEMS_PER_PAGE)
-
-    const handlePageChange = (page: number) => {
-        setCurrentPage(page)
-    }
 
     return {
         events,
@@ -80,12 +70,11 @@ export function useEvents(itemsPerPage = 9) {
         searchTerm,
         setSearchTerm,
         isLoading,
-        paginatedEvents,
-        currentPage,
+        page,
+        setPage: handlePageChange,
         totalPages,
+        totalItems,
         itemsPerPage,
-        totalItems: filteredEvents.length,
-        onPageChange: handlePageChange,
     }
 }
 

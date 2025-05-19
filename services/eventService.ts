@@ -4,9 +4,11 @@ import { axiosInstanceR2 } from "./apiConfig";
 
 
 export class EventService {
-    public async getEventsMe() {
+    public async getEventsMe({ page = 1, limit = 10 } = {}) {
         try {
-            const response = await axiosInstance.get("/producers/me/events")
+            const response = await axiosInstance.get("/producers/me/events", {
+                params: { page, limit }
+            })
 
             return { success: true, data: response.data }
         } catch (error: any) {

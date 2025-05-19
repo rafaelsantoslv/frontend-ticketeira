@@ -11,7 +11,11 @@ import { Pagination } from "@/components/ui/pagination"
 
 export default function EventosPage() {
 
-    const { filteredEvents, searchTerm, setSearchTerm, isLoading } = useEvents()
+    const { filteredEvents, searchTerm, setSearchTerm, isLoading, page,
+        setPage,
+        totalPages,
+        totalItems,
+        itemsPerPage, } = useEvents()
 
 
     return (
@@ -31,7 +35,7 @@ export default function EventosPage() {
             ) : (
                 <>
                     <EventsGrid events={filteredEvents} />
-                    <Pagination currentPage={1} itemsPerPage={9} totalItems={18} totalPages={2} onPageChange={() => { }} />
+                    <Pagination currentPage={page} itemsPerPage={itemsPerPage} totalItems={totalItems} totalPages={totalPages} onPageChange={setPage} />
                 </>
 
             )}
