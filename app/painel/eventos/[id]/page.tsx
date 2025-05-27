@@ -1,39 +1,26 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useParams } from "next/navigation"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import {
-    PlusCircle,
-    Trash2,
-    ChevronDown,
-    ChevronUp,
-} from "lucide-react"
-import EventCreationForm from "@/components/eventos/EventCreationFormProps"
-import { toast } from "@/components/ui/use-toast"
 import BatchManagementForm from "@/components/BatchManageForm"
 import SectorManagementForm from "@/components/SectorManageForm"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import EventCreationForm from "@/components/eventos/EventCreationFormProps"
 import { Badge } from "@/components/ui/badge"
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
-import CouponForm from "@/components/CouponForm"
-import CourtesyForm from "@/components/CourtesyForm"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import { Tabs, TabsContent } from "@/components/ui/tabs"
+import { toast } from "@/components/ui/use-toast"
+import {
+    PlusCircle
+} from "lucide-react"
+import { useParams } from "next/navigation"
+import { useEffect, useState } from "react"
 import { LoadingSpinner } from "@/components/LoadingSpinner"
 import { EventDashboard } from "@/components/eventos/[id]/EventDashboard"
-import { EventCardInfo } from "@/components/eventos/[id]/EventCardInfo"
+import { EventCardSector } from "@/components/eventos/[id]/EventCardSector"
 import { EventInfo } from "@/components/eventos/[id]/EventInfo"
 import { EventTabList } from "@/components/eventos/[id]/EventTabList"
-import { EventCardSector } from "@/components/eventos/[id]/EventCardSector"
-import { EventCardCreateCupon } from "@/components/eventos/[id]/EventCardCreateCupon"
-import { EventCardCuponList } from "@/components/eventos/[id]/EventCardCuponList"
 import { EventCuponsDiscout } from "@/components/eventos/[id]/EventCuponsDiscount"
-import { EventCardCreateCortesia } from "@/components/eventos/[id]/EventCardCreateCortesia"
-import { EventCardCortesiaList } from "@/components/eventos/[id]/EventCardCortesiaList"
-import { EventCortesy } from "@/components/eventos/[id]/EventCortesy"
 import { EventCheckin } from "@/components/eventos/[id]/EventCheckin"
+import { EventCortesy } from "@/components/eventos/[id]/EventCortesy"
 
 export type Batch = {
     id: string
@@ -105,7 +92,7 @@ export default function EventoDetalhesPage() {
     const [isFormOpen, setIsFormOpen] = useState(false)
     const [isBatchFormOpen, setIsBatchFormOpen] = useState(false)
     const [isSectorFormOpen, setIsSectorFormOpen] = useState(false)
-    const [event, setEvent] = useState<Event | null>(null)
+    const [event, setEvent] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
     const [expandedSectors, setExpandedSectors] = useState<Record<string, boolean>>({})
 
@@ -118,7 +105,7 @@ export default function EventoDetalhesPage() {
     useEffect(() => {
         // Em um cenário real, isso seria uma chamada de API com o ID do evento
         setTimeout(() => {
-            const mockEvent: Event = {
+            const mockEvent = {
                 id: eventId,
                 title: eventId === "1" ? "LA VIE GLOW PARTY - INAUGURAÇÃO" : "Evento " + eventId,
                 date: new Date("2023-06-15"),
@@ -189,6 +176,59 @@ export default function EventoDetalhesPage() {
                         sold: 0,
                     },
                 ],
+                checkins: [
+                    {
+                        id: "TK-001",
+                        name: "João Silva",
+                        email: "joao@email.com",
+                        sector: "Pista",
+                        batch: "1º Lote",
+                        status: "validated",
+                        validatedAt: "15/06/2023 22:45",
+                        price: "R$ 80,00",
+                    },
+                    {
+                        id: "TK-002",
+                        name: "Maria Souza",
+                        email: "maria@email.com",
+                        sector: "Camarote",
+                        batch: "VIP",
+                        status: "pending",
+                        validatedAt: null,
+                        price: "R$ 200,00",
+                    },
+                    {
+                        id: "TK-003",
+                        name: "Carlos Oliveira",
+                        email: "carlos@email.com",
+                        sector: "Pista",
+                        batch: "2º Lote",
+                        status: "cancelled",
+                        validatedAt: "15/06/2023 23:10",
+                        price: "R$ 100,00",
+                    },
+                    {
+                        id: "TK-004",
+                        name: "Ana Costa",
+                        email: "ana@email.com",
+                        sector: "Camarote",
+                        batch: "VIP",
+                        status: "validated",
+                        validatedAt: "15/06/2023 21:30",
+                        price: "R$ 200,00",
+                    },
+                    {
+                        id: "TK-005",
+                        name: "Pedro Santos",
+                        email: "pedro@email.com",
+                        sector: "Pista",
+                        batch: "1º Lote",
+                        status: "pending",
+                        validatedAt: null,
+                        price: "R$ 80,00",
+                    },
+                ]
+
             }
 
             // Inicializar todos os setores como expandidos
@@ -465,7 +505,6 @@ export default function EventoDetalhesPage() {
         })
     }
 
-
     // Calcular estatísticas do setor
     const getSectorStats = (sectorId: string) => {
         if (!event) return { totalSold: 0, totalRevenue: 0, totalCapacity: 0 }
@@ -589,7 +628,7 @@ export default function EventoDetalhesPage() {
                 </TabsContent>
 
                 {/* Check-ins */}
-                <EventCheckin />
+                <EventCheckin sampleCheckins={event?.checkins} />
 
             </Tabs>
 
