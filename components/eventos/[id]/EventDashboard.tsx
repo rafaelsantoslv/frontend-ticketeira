@@ -5,6 +5,7 @@ import { EventCardMethodPayments } from "./EventCardMethodPayments";
 import { EventCardRecentSales } from "./EventCardRecentSales";
 
 export function EventDashboard({ getBatchesBySector, getSectorStats, event }) {
+
     return (
         <TabsContent value="dashboard">
             <div className="space-y-6">

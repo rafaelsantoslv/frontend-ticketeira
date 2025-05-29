@@ -10,7 +10,7 @@ export function EventCardOverview({ event }) {
                 <CardTitle className="text-lg">Resumo de Vendas</CardTitle>
             </CardHeader>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                <StatCard title="Total de Ingressos" icon={<Ticket className="h-4 w-4 text-muted-foreground" />} value={event.stats.totalSold} description="Vendidos" />
+                <StatCard title="Total de Ingressos" icon={<Ticket className="h-4 w-4 text-muted-foreground" />} value={event.stats.totalSold} description="Emitidos" />
                 <StatCard title="Ticket Médio" icon={<TicketMinusIcon className="h-4 w-4 text-muted-foreground" />} value={formatCurrency(event.stats.ticketMedium)} />
                 <StatCard title="Check-ins" icon={<Check className="h-4 w-4 text-muted-foreground" />} value={`${event.stats.checkins} / ${event.stats.totalSold}`}
                     description="Validados" />

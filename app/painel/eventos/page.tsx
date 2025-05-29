@@ -2,7 +2,7 @@
 
 import { PainelHeader } from "@/components/PainelHeader"
 import { EventSearch } from "@/components/eventos/EventSearch"
-import { useEvents } from "@/hooks/useEvent"
+import { useEvents } from "@/hooks/useEvents"
 import { LoadingSpinner } from "@/components/LoadingSpinner"
 import { EventEmptyList } from "@/components/eventos/EventEmptyList"
 import { EventsGrid } from "@/components/eventos/EventGrid"
