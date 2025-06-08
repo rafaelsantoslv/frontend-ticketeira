@@ -3,7 +3,7 @@
 import { HelpCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import Layout from "@/components/layout"
+import Layout from "@/components/Layout"
 
 export default function TicketDashboard() {
   return (

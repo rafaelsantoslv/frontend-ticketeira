@@ -9,7 +9,7 @@ import { toast } from "@/components/ui/use-toast"
 import Link from "next/link"
 
 // Importar o formulário de criação de evento
-import EventCreationForm from "@/components/event-creation-form"
+import EventCreationForm from "@/components/EventCreationForm"
 
 export default function NovoEventoPage() {
     const router = useRouter()
