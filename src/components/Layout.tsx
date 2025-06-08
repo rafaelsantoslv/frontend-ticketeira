@@ -4,8 +4,8 @@ import type React from "react"
 
 import { MessageCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import Sidebar from "@/components/sidebar"
-import Header from "@/components/header"
+import Sidebar from "@/components/Sidebar"
+import Header from "@/components/Header"
 import { Toaster } from "@/components/ui/toaster"
 
 export default function Layout({ children }: { children: React.ReactNode }) {

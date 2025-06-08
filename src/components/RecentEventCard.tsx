@@ -2,7 +2,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { CalendarDays, DollarSign, Users } from "lucide-react"
-import { EventStatusBadge } from "./event-status-badge"
+import { EventStatusBadge } from "./EventStatusBadge"
 import { formatCurrency } from "@/utils/formatCurrency"
 
 interface RecentEventCardProps {

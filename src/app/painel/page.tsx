@@ -8,9 +8,9 @@ import { Badge } from "@/components/ui/badge"
 import { useAuth } from "@/contexts/auth-context"
 import { usePainelData } from "./hooks/use-painel-data"
 import { formatCurrency } from "@/utils/formatCurrency"
-import { EventStatusBadge } from "@/components/event-status-badge"
-import { StatCard } from "@/components/stat-card"
-import { RecentEventCard } from "@/components/recent-event-card"
+import { EventStatusBadge } from "@/components/EventStatusBadge"
+import { StatCard } from "@/components/StatCard"
+import { RecentEventCard } from "@/components/RecentEventCard"
 
 
 
