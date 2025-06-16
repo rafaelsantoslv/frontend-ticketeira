@@ -2,6 +2,8 @@
 import { EventService } from '@/services/eventService'
 import { Event } from '@/types/Event'
 import { useState, useEffect } from 'react'
+import { USE_MOCKS } from '@/utils/config'
+import { mockEvents } from '@/mocks/dashboard'
 
 
 
@@ -25,22 +27,20 @@ export function useEvents() {
     // Função para buscar eventos
     const fetchEvents = async () => {
         try {
-            const token = localStorage.getItem("token")
-            // Em um cenário real, isso seria uma chamada de API
-            setTimeout(() => {
-                eventService.getEventsMe(token).then((response) => {
-                    console.log(response.data.events)
-                    setEvents(response.data.events)
-                    setFilteredEvents(response.data.events)
+            if (USE_MOCKS) {
+                setTimeout(() => {
+                    setEvents(mockEvents)
+                    setFilteredEvents(mockEvents)
                     setIsLoading(false)
-                }).catch((error) => {
-                    console.log(error)
-                })
+                }, 500)
+                return
+            }
 
-                //setEvents(mockEvents)
-                //setFilteredEvents(mockEvents)
-                //setIsLoading(false)
-            }, 1000)
+            const token = localStorage.getItem("token")
+            const response = await eventService.getEventsMe(token)
+            setEvents(response.data.events)
+            setFilteredEvents(response.data.events)
+            setIsLoading(false)
         } catch (error) {
             console.error('Erro ao carregar eventos:', error)
             setIsLoading(false)

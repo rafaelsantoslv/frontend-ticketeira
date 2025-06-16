@@ -1,6 +1,7 @@
-import axios from "axios";
+import axios from 'axios'
+import { API_BASE_URL } from '@/utils/config'
 
 export const axiosInstance = axios.create({
-    baseURL: "http://localhost:8080/api",
-    withCredentials: true,
+  baseURL: API_BASE_URL,
+  withCredentials: true,
 })

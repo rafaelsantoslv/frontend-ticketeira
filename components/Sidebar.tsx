@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { CalendarSearch, FileText, LayoutDashboard, MessageCircle, User, Wallet } from "lucide-react"
-import { useSidebarState } from "@/hooks/use-sidebar-state"
+import { useSidebarState } from "@/hooks/useSidebarState"
 import { cn } from "@/lib/utils"
 import { SideBarItem } from "./SidebarItem"
 

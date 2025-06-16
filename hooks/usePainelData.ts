@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react"
 import { EventSummary, StatsSummary } from "../types/PainelType"
-import { mockEvents, mockStats } from "../mock/painel"
+import { USE_MOCKS } from "@/utils/config"
+import { PainelService } from "@/services/painelService"
+import { MockPainelService } from "@/services/mock/painelService"
 import { useAuth2 } from "@/contexts/AuthContext"
 
 export function usePainelData() {
@@ -13,17 +15,23 @@ export function usePainelData() {
         totalRevenue: 0,
     })
     const [isLoading, setIsLoading] = useState(true)
+    const service = USE_MOCKS ? new MockPainelService() : new PainelService()
     useEffect(() => {
         const fetchData = async () => {
             await validateToken()
-
-            // Se chegou aqui, o token é válido
-            // Em um cenário real, isso seria uma chamada de API
-            setTimeout(() => {
-                setRecentEvents(mockEvents)
-                setStats(mockStats)
+            try {
+                const token = localStorage.getItem('token') || ''
+                const [eventsRes, statsRes] = await Promise.all([
+                    service.getRecentEvents(token),
+                    service.getStats(token),
+                ])
+                setRecentEvents(eventsRes.data)
+                setStats(statsRes.data)
+            } catch (error) {
+                console.error('Erro ao carregar dados do painel:', error)
+            } finally {
                 setIsLoading(false)
-            }, 1000)
+            }
         }
 
         fetchData()
