@@ -34,19 +34,8 @@ const withdrawalFormSchema = z.object({
         }),
 })
 
-// Tipo para os saques
-type Withdrawal = {
-    id: string
-    date: string
-    amount: number
-    status: "pending" | "completed" | "rejected"
-    pixKey: string
-    fullName: string
-}
-
-export default function FinanceiroPage() {
     const [isSubmitting, setIsSubmitting] = useState(false)
-    const [withdrawals, setWithdrawals] = useState<Withdrawal[]>([
+    const [withdrawals, setWithdrawals] = useState([
         {
             id: "w1",
             date: "15/06/2023",
@@ -72,7 +61,7 @@ export default function FinanceiroPage() {
         pendingWithdrawals: 2300,
     }
 
-    const form = useForm<z.infer<typeof withdrawalFormSchema>>({
+    const form = useForm({
         resolver: zodResolver(withdrawalFormSchema),
         defaultValues: {
             fullName: "",
@@ -82,7 +71,7 @@ export default function FinanceiroPage() {
         },
     })
 
-    function onSubmit(values: z.infer<typeof withdrawalFormSchema>) {
+    function onSubmit(values) {
         setIsSubmitting(true)
 
         // Verificar se o valor solicitado é maior que o saldo disponível
@@ -98,7 +87,7 @@ export default function FinanceiroPage() {
 
         // Simular uma chamada de API
         setTimeout(() => {
-            const newWithdrawal: Withdrawal = {
+            const newWithdrawal = {
                 id: `w${Date.now()}`,
                 date: new Date().toLocaleDateString("pt-BR"),
                 amount: values.amount,
@@ -120,7 +109,7 @@ export default function FinanceiroPage() {
     }
 
     // Formatar valor monetário
-    const formatCurrency = (value: number) => {
+    const formatCurrency = ((value)) => {
         return new Intl.NumberFormat("pt-BR", {
             style: "currency",
             currency: "BRL",
@@ -128,7 +117,7 @@ export default function FinanceiroPage() {
     }
 
     // Renderizar o status do saque
-    const renderWithdrawalStatus = (status: string) => {
+    const renderWithdrawalStatus = (status) => {
         switch (status) {
             case "pending":
                 return <Badge className="bg-yellow-500">Pendente</Badge>

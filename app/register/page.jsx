@@ -32,11 +32,11 @@ const formSchema = z
 export default function RegisterPage() {
   const { register } = useAuth2()
   const router = useRouter()
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
+  const [error, setError] = useState(null)
+  const [success, setSuccess] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
@@ -46,7 +46,7 @@ export default function RegisterPage() {
     },
   })
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values) => {
     setError(null)
     setSuccess(null)
     setIsLoading(true)

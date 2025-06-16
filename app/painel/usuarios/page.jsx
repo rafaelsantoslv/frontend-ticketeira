@@ -41,21 +41,13 @@ const producerFormSchema = z.object({
 })
 
 // Tipo para usuários
-type User = {
-    id: string
-    name: string
-    email: string
-    role: "admin" | "producer" | "user"
-    status: "active" | "inactive"
-    createdAt: string
-}
 
 export default function UsuariosPage() {
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [searchTerm, setSearchTerm] = useState("")
-    const [filterRole, setFilterRole] = useState<string>("all")
-    const [users, setUsers] = useState<User[]>([
+    const [filterRole, setFilterRole] = useState("all")
+    const [users, setUsers] = useState([
         {
             id: "u1",
             name: "João Silva",
@@ -90,7 +82,7 @@ export default function UsuariosPage() {
         },
     ])
 
-    const form = useForm<z.infer<typeof producerFormSchema>>({
+    const form = useForm({
         resolver: zodResolver(producerFormSchema),
         defaultValues: {
             name: "",
@@ -101,7 +93,7 @@ export default function UsuariosPage() {
         },
     })
 
-    function onSubmit(values: z.infer<typeof producerFormSchema>) {
+    function onSubmit(values) {
         setIsSubmitting(true)
 
         // Simular uma chamada de API
@@ -138,7 +130,7 @@ export default function UsuariosPage() {
     })
 
     // Renderizar o papel do usuário
-    const renderUserRole = (role: string) => {
+    const renderUserRole = (role) => {
         switch (role) {
             case "admin":
                 return <Badge className="bg-purple-500">Administrador</Badge>
@@ -152,7 +144,7 @@ export default function UsuariosPage() {
     }
 
     // Renderizar o status do usuário
-    const renderUserStatus = (status: string) => {
+    const renderUserStatus = (status) => {
         switch (status) {
             case "active":
                 return <Badge className="bg-green-500">Ativo</Badge>

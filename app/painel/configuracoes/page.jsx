@@ -1,6 +1,5 @@
 "use client"
 
-import type React from "react"
 
 import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -43,7 +42,7 @@ export default function ConfiguracoesPage() {
     })
 
     // Função para atualizar os dados do usuário
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e) => {
         const { name, value } = e.target
         setUserData((prev) => ({
             ...prev,
@@ -52,7 +51,7 @@ export default function ConfiguracoesPage() {
     }
 
     // Função para atualizar as notificações
-    const handleNotificationChange = (key: string, checked: boolean) => {
+    const handleNotificationChange = (key, checked) => {
         setUserData((prev) => ({
             ...prev,
             notificacoes: {
@@ -63,7 +62,7 @@ export default function ConfiguracoesPage() {
     }
 
     // Função para salvar as alterações
-    const handleSave = (section: string) => {
+    const handleSave = (section) => {
         setIsLoading(true)
 
         // Simulação de uma requisição

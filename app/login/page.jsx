@@ -14,7 +14,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useAuth2 } from "@/contexts/AuthContext"
 import { useFormSubmit } from "@/hooks/useFormSubmit"
-import { User } from "@/types/Auth"
 
 const formSchema = z.object({
   email: z.string().email({ message: "Email inválido" }),
@@ -24,18 +23,18 @@ const formSchema = z.object({
 export default function LoginPage() {
   const router = useRouter()
   const { login } = useAuth2()
-  const { isLoading, error, handleSubmit } = useFormSubmit<User>({
+  const { isLoading, error, handleSubmit } = useFormSubmit({
     onSuccess: () => router.push("/painel")
   })
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   })
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = (values) => {
     handleSubmit(() => login({ email: values.email, password: values.password }))
   }
   return (

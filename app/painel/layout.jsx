@@ -1,11 +1,10 @@
 "use client"
 
-import type React from "react"
 
 import Sidebar from "@/components/Sidebar"
 import Header from "@/components/Header"
 
-export default function PainelLayout({ children }: { children: React.ReactNode }) {
+export default function PainelLayout({ children }) {
 
   return (
     <div className="flex h-screen">

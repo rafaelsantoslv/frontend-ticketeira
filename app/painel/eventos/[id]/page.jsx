@@ -23,83 +23,25 @@ import { EventCheckin } from "@/components/eventos/[id]/EventCheckin"
 import { EventCortesy } from "@/components/eventos/[id]/EventCortesy"
 import { useEvent } from "@/hooks/useEvent"
 
-export type Batch = {
-    id: string
-    sectorId: string
-    name: string
-    quantity: number
-    price: number
-    active: boolean
-    sold: number
-}
 
-export type Sector = {
-    id: string
-    name: string
-    capacity: number
-    description?: string
-    expanded?: boolean
-}
-export type Coupon = {
-    id: string
-    code: string
-    discountType: "percentage" | "fixed"
-    discountValue: number
-    unlimited: boolean
-    usageLimit?: number
-    usageCount: number
-    active: boolean
-    createdAt: Date
-}
 
-export type Courtesy = {
-    id: string
-    firstName: string
-    lastName: string
-    email: string
-    sectorId: string
-    ticketCode: string
-    createdAt: Date
-    sent: boolean
-}
 
-export type Event = {
-    id: string
-    title: string
-    date: Date
-    time: string
-    venueName: string
-    address: string
-    ageRating: string
-    category: string
-    about: string
-    image?: string
-    coverImage?: string
-    sectors: Sector[]
-    batches: Batch[]
-    status: "active" | "upcoming" | "completed" | "canceled"
-    stats: {
-        totalSold: number
-        totalRevenue: number
-        ticketMedium: number
-        checkins: number
-    }
 }
 
 export default function EventoDetalhesPage() {
 
 
     const params = useParams()
-    const eventId = params.id as string
+    const eventId = params.id 
 
     const [isFormOpen, setIsFormOpen] = useState(false)
     const [isBatchFormOpen, setIsBatchFormOpen] = useState(false)
     const [isSectorFormOpen, setIsSectorFormOpen] = useState(false)
-    const [expandedSectors, setExpandedSectors] = useState<Record<string, boolean>>({})
+    const [expandedSectors, setExpandedSectors] = useState({})
 
     // Adicionar os novos estados e funções para gerenciar cupons e cortesias
-    const [coupons, setCoupons] = useState<Coupon[]>([])
-    const [courtesies, setCourtesies] = useState<Courtesy[]>([])
+    const [coupons, setCoupons] = useState([])
+    const [courtesies, setCourtesies] = useState([])
     const [isSubmittingCourtesy, setIsSubmittingCourtesy] = useState(false)
 
 
@@ -113,7 +55,7 @@ export default function EventoDetalhesPage() {
     } = useEvent()
 
 
-    const handleEditEvent = (data: Partial<Event>) => {
+    const handleEditEvent = (data) => {
         if (!event) return
 
         const updatedEvent = {
@@ -129,10 +71,10 @@ export default function EventoDetalhesPage() {
         setIsFormOpen(false)
     }
 
-    const handleAddSector = (sectorData: Omit<Sector, "id">) => {
+    const handleAddSector = (sectorData) => {
         if (!event) return
 
-        const newSector: Sector = {
+        const newSector = {
             ...sectorData,
             id: `s${Date.now()}`,
         }
@@ -153,10 +95,10 @@ export default function EventoDetalhesPage() {
         setIsSectorFormOpen(false)
     }
 
-    const handleAddBatch = (batchData: Omit<Batch, "id" | "sold">) => {
+    const handleAddBatch = (batchData) => {
         if (!event) return
 
-        const newBatch: Batch = {
+        const newBatch = {
             ...batchData,
             id: `b${Date.now()}`,
             sold: 0,
@@ -179,7 +121,7 @@ export default function EventoDetalhesPage() {
         setIsBatchFormOpen(false)
     }
 
-    const handleDeleteSector = (sectorId: string) => {
+    const handleDeleteSector = (sectorId) => {
         if (!event) return
 
         // Verificar se existem lotes associados a este setor
@@ -207,7 +149,7 @@ export default function EventoDetalhesPage() {
         })
     }
 
-    const handleDeleteBatch = (batchId: string) => {
+    const handleDeleteBatch = (batchId) => {
         if (!event) return
 
         const updatedEvent = {
@@ -223,7 +165,7 @@ export default function EventoDetalhesPage() {
         })
     }
 
-    const handleToggleBatchStatus = (batchId: string) => {
+    const handleToggleBatchStatus = (batchId) => {
         if (!event) return
 
         const updatedEvent = {
@@ -251,7 +193,7 @@ export default function EventoDetalhesPage() {
         }
     }
 
-    const toggleSectorExpanded = (sectorId: string) => {
+    const toggleSectorExpanded = (sectorId) => {
         setExpandedSectors((prev) => ({
             ...prev,
             [sectorId]: !prev[sectorId],
@@ -259,7 +201,7 @@ export default function EventoDetalhesPage() {
     }
 
     // Função para renderizar o status do evento
-    const renderEventStatus = (status: string) => {
+    const renderEventStatus = (status) => {
         switch (status) {
             case "active":
                 return <Badge className="bg-green-500">Ativo</Badge>
@@ -274,7 +216,7 @@ export default function EventoDetalhesPage() {
         }
     }
 
-    const handleCreateCoupon = (data: any) => {
+    const handleCreateCoupon = (data) => {
         const newCoupon: Coupon = {
             id: `c${Date.now()}`,
             code: data.code,
@@ -296,7 +238,7 @@ export default function EventoDetalhesPage() {
     }
 
     // Adicionar função para criar cortesia
-    const handleCreateCourtesy = (data: any) => {
+    const handleCreateCourtesy = (data) => {
         setIsSubmittingCourtesy(true)
 
         // Simular uma chamada de API
@@ -326,7 +268,7 @@ export default function EventoDetalhesPage() {
     }
 
     // Adicionar função para deletar cupom
-    const handleDeleteCoupon = (couponId: string) => {
+    const handleDeleteCoupon = (couponId) => {
         setCoupons(coupons.filter((coupon) => coupon.id !== couponId))
 
         toast({
@@ -336,7 +278,7 @@ export default function EventoDetalhesPage() {
     }
 
     // Adicionar função para reenviar cortesia
-    const handleResendCourtesy = (courtesyId: string) => {
+    const handleResendCourtesy = (courtesyId) => {
         setCourtesies(
             courtesies.map((courtesy) => {
                 if (courtesy.id === courtesyId) {
@@ -353,7 +295,7 @@ export default function EventoDetalhesPage() {
     }
 
     // Adicionar função para deletar cortesia
-    const handleDeleteCourtesy = (courtesyId: string) => {
+    const handleDeleteCourtesy = (courtesyId) => {
         setCourtesies(courtesies.filter((courtesy) => courtesy.id !== courtesyId))
 
         toast({
