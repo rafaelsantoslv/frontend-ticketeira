@@ -11,12 +11,12 @@ import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { useToast } from "@/components/ui/use-toast"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { useAuth } from "@/contexts/auth-context"
+import { useAuth2 } from "@/contexts/AuthContext"
 import { Loader2, Upload } from "lucide-react"
 
 export default function ConfiguracoesPage() {
     const { toast } = useToast()
-    const { user } = useAuth()
+    const { user } = useAuth2()
     const [isLoading, setIsLoading] = useState(false)
     const [activeTab, setActiveTab] = useState("perfil")
 

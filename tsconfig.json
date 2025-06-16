@@ -1,6 +1,10 @@
 {
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "target": "ES6",
     "skipLibCheck": true,
@@ -19,9 +23,28 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": [
+        "./*"
+      ]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "components/eventos/[id]/EventDashboard.tsx",
+    "app/page.jsx",
+    "components/public/PublicHeader.jsx",
+    "components/eventos/EventCard2.jsx",
+    "components/eventos/EventBatchSelection.jsx",
+    "app/eventos/page.jsx",
+    "app/eventos/[id]/page.jsx",
+    "components/BatchManageForm.tsx",
+    "components/eventos/EventList.jsx",
+    "components/eventos/EventListItem.jsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

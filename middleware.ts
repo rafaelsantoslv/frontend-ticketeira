@@ -1,31 +1,74 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
+import { Route } from "./types/MiddlewareType"
+
+const ROUTES: Record<string, Route> = {
+  home: {
+    path: '/',
+    isProtected: false
+  },
+  login: {
+    path: '/login',
+    isProtected: false,
+    isAuthRoute: true
+  },
+  register: {
+    path: '/register',
+    isProtected: false,
+    isAuthRoute: true
+  },
+  painel: {
+    path: '/painel',
+    isProtected: true
+  }
+}
+
 
 export function middleware(request: NextRequest) {
-  const isDevByPass = process.env.SKIP_AUTH === 'true';
 
-  if (isDevByPass) {
+  if (process.env.NEXT_PUBLIC_BYPASS_AUTH === 'true') {
     return NextResponse.next();
   }
 
-  const token = request.cookies.get("auth_token")?.value
-  const isAuthRoute = request.nextUrl.pathname.startsWith("/login") || request.nextUrl.pathname.startsWith("/register")
-  const isPublicRoute = request.nextUrl.pathname === "/"
-  const isPainelRoute = request.nextUrl.pathname.startsWith("/painel")
+  const { pathname } = request.nextUrl;
+  const token = request.cookies.get("token")?.value;
 
-  // Se tentar acessar rota do painel sem token, redireciona para login
-  if (!token && isPainelRoute) {
-    console.log("Redirecionando para /login: Tentativa de acesso ao painel sem token")
-    return NextResponse.redirect(new URL("/login", request.url))
+  const isAuthRoute = (path: string): boolean => {
+    return Object.values(ROUTES).some(
+      route => route.isAuthRoute && path.startsWith(route.path)
+    );
   }
 
-  // Se tentar acessar login/register com token, redireciona para painel
-  if (token && isAuthRoute) {
-    console.log("Redirecionando para /painel/dashboard: Usuário já autenticado tentando acessar login/register")
-    return NextResponse.redirect(new URL("/painel/dashboard", request.url))
+  const isProtectedRoute = (path: string): boolean => {
+    return Object.values(ROUTES).some(
+      route => route.isProtected && path.startsWith(route.path)
+    );
   }
 
-  return NextResponse.next()
+  // Função para redirecionar
+  const redirectTo = (path: string): NextResponse => {
+    return NextResponse.redirect(new URL(path, request.url));
+  }
+
+  try {
+    // Usuário não autenticado tentando acessar rota protegida
+    if (!token && isProtectedRoute(pathname)) {
+      console.log(`Redirecionamento: Acesso negado à rota protegida ${pathname}`);
+      return redirectTo(ROUTES.login.path);
+    }
+
+    // Usuário autenticado tentando acessar rotas de auth
+    if (token && isAuthRoute(pathname)) {
+      console.log(`Redirecionamento: Usuário autenticado tentando acessar ${pathname}`);
+      return redirectTo(ROUTES.painel.path);
+    }
+
+    // Permite a continuação da requisição
+    return NextResponse.next();
+  } catch (error) {
+    console.error('Erro no middleware:', error);
+    return redirectTo(ROUTES.home.path);
+  }
 }
 
 export const config = {
