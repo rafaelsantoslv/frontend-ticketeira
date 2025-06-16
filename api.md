@@ -17,11 +17,17 @@ Esta documentação descreve os endpoints necessários para suportar o sistema d
 
 ## Base URL
 
+Defina a variável de ambiente `NEXT_PUBLIC_API_URL` para apontar para o backend desejado. Por exemplo:
+
+```bash
+# Ambiente local
+NEXT_PUBLIC_API_URL=http://localhost:8080/api
+
+# Produção
+NEXT_PUBLIC_API_URL=https://api.unyxticket.com/v1
+
 ```
 
-[https://api.unyxticket.com/v1](https://api.unyxticket.com/v1)
-
-```plaintext
 
 ## Autenticação
 
