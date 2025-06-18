@@ -1,6 +1,6 @@
 "use client"
 
-import { AuthService } from "@/services/authService";
+import { AuthService } from "@/services/authService"
 import { ApiResponse } from "@/types/Api";
 import { Credentials, User } from "@/types/Auth";
 import { useRouter } from "next/navigation";

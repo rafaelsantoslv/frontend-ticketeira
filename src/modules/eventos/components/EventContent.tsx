@@ -1,7 +1,7 @@
 // components/eventos/EventContent.tsx
 import { LoadingSpinner } from '../LoadingSpinner';
 import { EventEmptyList } from './EventEmptyList';
-import { EventsGrid } from './EventGrid';
+import { EventsGrid } from './eventos/EventGrid';
 import { Event } from '@/types/Event';
 
 interface EventContentProps {
