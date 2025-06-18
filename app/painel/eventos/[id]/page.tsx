@@ -1,483 +1,142 @@
 "use client"
 
-import BatchManagementForm from "@/components/BatchManageForm"
-import SectorManagementForm from "@/components/SectorManageForm"
-import EventCreationForm from "@/components/eventos/EventCreationFormProps"
+import { useState } from "react"
+import { useParams } from "next/navigation"
+import { PlusCircle } from "lucide-react"
+
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Tabs, TabsContent } from "@/components/ui/tabs"
-import { toast } from "@/components/ui/use-toast"
-import {
-    PlusCircle
-} from "lucide-react"
-import { useParams } from "next/navigation"
-import { useEffect, useState } from "react"
 import { LoadingSpinner } from "@/components/LoadingSpinner"
-import { EventDashboard } from "@/components/eventos/[id]/EventDashboard"
-import { EventCardSector } from "@/components/eventos/[id]/EventCardSector"
-import { EventInfo } from "@/components/eventos/[id]/EventInfo"
-import { EventTabList } from "@/components/eventos/[id]/EventTabList"
-import { EventCuponsDiscout } from "@/components/eventos/[id]/EventCuponsDiscount"
-import { EventCheckin } from "@/components/eventos/[id]/EventCheckin"
-import { EventCortesy } from "@/components/eventos/[id]/EventCortesy"
-import { useEvent } from "@/hooks/useEvent"
+import { toast } from "sonner"
 
-export type Batch = {
-    id: string
-    sectorId: string
-    name: string
-    quantity: number
-    price: number
-    active: boolean
-    sold: number
-}
 
-export type Sector = {
-    id: string
-    name: string
-    capacity: number
-    description?: string
-    expanded?: boolean
-}
-export type Coupon = {
-    id: string
-    code: string
-    discountType: "percentage" | "fixed"
-    discountValue: number
-    unlimited: boolean
-    usageLimit?: number
-    usageCount: number
-    active: boolean
-    createdAt: Date
-}
 
-export type Courtesy = {
-    id: string
-    firstName: string
-    lastName: string
-    email: string
-    sectorId: string
-    ticketCode: string
-    createdAt: Date
-    sent: boolean
-}
+import { EventTabList } from "@/modules/eventos/components/EventTabList"
+import { EventDashboard } from "@/modules/eventos/components/EventDashboard"
+import { EventInfo } from "@/modules/eventos/components/EventInfo"
+import { EventCardSector } from "@/modules/eventos/components/EventCardSector"
+import { EventCuponsDiscout } from "@/modules/eventos/components/EventCuponsDiscount"
+import { EventCortesy } from "@/modules/eventos/components/EventCortesy"
+import { EventCheckin } from "@/modules/eventos/components/EventCheckin"
+import EventCreationForm from "@/modules/eventos/components/EventCreationFormProps"
+import SectorManagementForm from "@/components/SectorManageForm"
+import BatchManagementForm from "@/components/BatchManageForm"
+import { useEventDetails } from "@/modules/eventos/hooks/useEventDetails"
 
-export type Event = {
-    id: string
-    title: string
-    date: Date
-    time: string
-    venueName: string
-    address: string
-    ageRating: string
-    category: string
-    about: string
-    image?: string
-    coverImage?: string
-    sectors: Sector[]
-    batches: Batch[]
-    status: "active" | "upcoming" | "completed" | "canceled"
-    stats: {
-        totalSold: number
-        totalRevenue: number
-        ticketMedium: number
-        checkins: number
-    }
-}
+
 
 export default function EventoDetalhesPage() {
-
-
-    const params = useParams()
-    const eventId = params.id as string
+    const { id } = useParams()
+    const eventId = id as string
 
     const [isFormOpen, setIsFormOpen] = useState(false)
     const [isBatchFormOpen, setIsBatchFormOpen] = useState(false)
     const [isSectorFormOpen, setIsSectorFormOpen] = useState(false)
-    const [expandedSectors, setExpandedSectors] = useState<Record<string, boolean>>({})
-
-    // Adicionar os novos estados e funções para gerenciar cupons e cortesias
-    const [coupons, setCoupons] = useState<Coupon[]>([])
-    const [courtesies, setCourtesies] = useState<Courtesy[]>([])
-    const [isSubmittingCourtesy, setIsSubmittingCourtesy] = useState(false)
-
 
     const {
-        getBatchesBySector,
-        getSectorStats,
         event,
-        setEvent,
         isLoading,
-        setIsLoading
-    } = useEvent()
+        updateEvent,
+        expandedSectors,
+        toggleSectorExpanded,
+        addSector,
+        addBatch,
+        deleteSector,
+        deleteBatch,
+        toggleBatchStatus,
+        coupons,
+        setCoupons,
+        createCoupon,
+        courtesies,
+        setCourtesies,
+        createCourtesy,
+        isSubmittingCourtesy
+    } = useEventDetails(eventId)
 
-
-    const handleEditEvent = (data: Partial<Event>) => {
-        if (!event) return
-
-        const updatedEvent = {
-            ...event,
-            ...data,
-        }
-
-        setEvent(updatedEvent)
-        toast({
-            title: "Evento atualizado com sucesso!",
-            description: `O evento "${updatedEvent.title}" foi atualizado.`,
-        })
+    const handleEditEvent = (data) => {
+        updateEvent(data)
+        toast.success("Evento atualizado com sucesso!")
         setIsFormOpen(false)
     }
 
-    const handleAddSector = (sectorData: Omit<Sector, "id">) => {
-        if (!event) return
-
-        const newSector: Sector = {
-            ...sectorData,
-            id: `s${Date.now()}`,
-        }
-
-        const updatedEvent = {
-            ...event,
-            sectors: [...event.sectors, newSector],
-        }
-
-        setEvent(updatedEvent)
-        setExpandedSectors((prev) => ({ ...prev, [newSector.id]: true }))
-
-        toast({
-            title: "Setor adicionado com sucesso!",
-            description: `O setor "${sectorData.name}" foi adicionado ao evento.`,
-        })
-
-        setIsSectorFormOpen(false)
-    }
-
-    const handleAddBatch = (batchData: Omit<Batch, "id" | "sold">) => {
-        if (!event) return
-
-        const newBatch: Batch = {
-            ...batchData,
-            id: `b${Date.now()}`,
-            sold: 0,
-        }
-
-        const updatedEvent = {
-            ...event,
-            batches: [...event.batches, newBatch],
-        }
-
-        setEvent(updatedEvent)
-
-        const sectorName = event.sectors.find((s) => s.id === batchData.sectorId)?.name || "desconhecido"
-
-        toast({
-            title: "Lote adicionado com sucesso!",
-            description: `O lote "${batchData.name}" foi adicionado ao setor "${sectorName}".`,
-        })
-
-        setIsBatchFormOpen(false)
-    }
-
-    const handleDeleteSector = (sectorId: string) => {
-        if (!event) return
-
-        // Verificar se existem lotes associados a este setor
-        const hasAssociatedBatches = event.batches.some((batch) => batch.sectorId === sectorId)
-
-        if (hasAssociatedBatches) {
-            toast({
-                title: "Não é possível excluir o setor",
-                description: "Este setor possui lotes associados. Remova os lotes primeiro.",
-                variant: "destructive",
-            })
-            return
-        }
-
-        const updatedEvent = {
-            ...event,
-            sectors: event.sectors.filter((sector) => sector.id !== sectorId),
-        }
-
-        setEvent(updatedEvent)
-
-        toast({
-            title: "Setor excluído",
-            description: "O setor foi excluído com sucesso.",
-        })
-    }
-
-    const handleDeleteBatch = (batchId: string) => {
-        if (!event) return
-
-        const updatedEvent = {
-            ...event,
-            batches: event.batches.filter((batch) => batch.id !== batchId),
-        }
-
-        setEvent(updatedEvent)
-
-        toast({
-            title: "Lote excluído",
-            description: "O lote foi excluído com sucesso.",
-        })
-    }
-
-    const handleToggleBatchStatus = (batchId: string) => {
-        if (!event) return
-
-        const updatedEvent = {
-            ...event,
-            batches: event.batches.map((batch) => {
-                if (batch.id === batchId) {
-                    return {
-                        ...batch,
-                        active: !batch.active,
-                    }
-                }
-                return batch
-            }),
-        }
-
-        setEvent(updatedEvent)
-
-        const batch = event.batches.find((b) => b.id === batchId)
-        if (batch) {
-            const newStatus = !batch.active
-            toast({
-                title: `Lote ${newStatus ? "ativado" : "desativado"}`,
-                description: `O lote "${batch.name}" foi ${newStatus ? "ativado" : "desativado"}.`,
-            })
-        }
-    }
-
-    const toggleSectorExpanded = (sectorId: string) => {
-        setExpandedSectors((prev) => ({
-            ...prev,
-            [sectorId]: !prev[sectorId],
-        }))
-    }
-
-    // Função para renderizar o status do evento
-    const renderEventStatus = (status: string) => {
-        switch (status) {
-            case "active":
-                return <Badge className="bg-green-500">Ativo</Badge>
-            case "upcoming":
-                return <Badge className="bg-blue-500">Em breve</Badge>
-            case "completed":
-                return <Badge className="bg-gray-500">Concluído</Badge>
-            case "canceled":
-                return <Badge className="bg-red-500">Cancelado</Badge>
-            default:
-                return null
-        }
-    }
-
-    const handleCreateCoupon = (data: any) => {
-        const newCoupon: Coupon = {
-            id: `c${Date.now()}`,
-            code: data.code,
-            discountType: data.discountType,
-            discountValue: data.discountValue,
-            unlimited: data.unlimited,
-            usageLimit: data.usageLimit,
-            usageCount: 0,
-            active: data.active,
-            createdAt: new Date(),
-        }
-
-        setCoupons([...coupons, newCoupon])
-
-        toast({
-            title: "Cupom criado com sucesso!",
-            description: `O cupom "${data.code}" foi criado.`,
-        })
-    }
-
-    // Adicionar função para criar cortesia
-    const handleCreateCourtesy = (data: any) => {
-        setIsSubmittingCourtesy(true)
-
-        // Simular uma chamada de API
-        setTimeout(() => {
-            const ticketCode = "CORT-" + Math.random().toString(36).substring(2, 10).toUpperCase()
-
-            const newCourtesy: Courtesy = {
-                id: `ct${Date.now()}`,
-                firstName: data.firstName,
-                lastName: data.lastName,
-                email: data.email,
-                sectorId: data.sectorId,
-                ticketCode,
-                createdAt: new Date(),
-                sent: false,
-            }
-
-            setCourtesies([...courtesies, newCourtesy])
-
-            toast({
-                title: "Cortesia gerada com sucesso!",
-                description: `A cortesia para ${data.firstName} ${data.lastName} foi gerada e será enviada para ${data.email}.`,
-            })
-
-            setIsSubmittingCourtesy(false)
-        }, 1500)
-    }
-
-    // Adicionar função para deletar cupom
-    const handleDeleteCoupon = (couponId: string) => {
-        setCoupons(coupons.filter((coupon) => coupon.id !== couponId))
-
-        toast({
-            title: "Cupom excluído",
-            description: "O cupom foi excluído com sucesso.",
-        })
-    }
-
-    // Adicionar função para reenviar cortesia
-    const handleResendCourtesy = (courtesyId: string) => {
-        setCourtesies(
-            courtesies.map((courtesy) => {
-                if (courtesy.id === courtesyId) {
-                    return { ...courtesy, sent: true }
-                }
-                return courtesy
-            }),
-        )
-
-        toast({
-            title: "Cortesia reenviada",
-            description: "A cortesia foi reenviada com sucesso.",
-        })
-    }
-
-    // Adicionar função para deletar cortesia
-    const handleDeleteCourtesy = (courtesyId: string) => {
-        setCourtesies(courtesies.filter((courtesy) => courtesy.id !== courtesyId))
-
-        toast({
-            title: "Cortesia excluída",
-            description: "A cortesia foi excluída com sucesso.",
-        })
-    }
-
-    if (isLoading) {
-        return <LoadingSpinner />
-    }
-
-    if (!event) {
-        return (
-            <div className="text-center py-8">
-                <h2 className="text-xl font-semibold">Evento não encontrado</h2>
-                <p className="text-muted-foreground mt-2">O evento que você está procurando não existe ou foi removido.</p>
-                <Button className="mt-4" onClick={() => window.history.back()}>
-                    Voltar
-                </Button>
-            </div>
-        )
-    }
+    if (isLoading) return <LoadingSpinner />
+    if (!event) return (
+        <div className="text-center py-8">
+            <h2 className="text-xl font-semibold">Evento não encontrado</h2>
+            <p className="text-muted-foreground mt-2">Verifique se o link está correto.</p>
+            <Button className="mt-4" onClick={() => window.history.back()}>Voltar</Button>
+        </div>
+    )
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
-                    <h1 className="text-2xl font-bold tracking-tight">{event.title}</h1>
-                    {renderEventStatus(event.status)}
+                    <h1 className="text-2xl font-bold">{event.title}</h1>
+                    <Badge>{event.status}</Badge>
                 </div>
             </div>
 
             <Tabs defaultValue="dashboard">
-                {/* Tab List*/}
                 <EventTabList />
-
-                {/* Dashboard Tab */}
-                <EventDashboard getBatchesBySector={getBatchesBySector} getSectorStats={getSectorStats} event={event} />
-
-                {/* Info Tab */}
+                <EventDashboard event={event} />
                 <EventInfo event={event} setIsFormOpen={setIsFormOpen} />
 
-                {/* Setores e Lotes Tab */}
                 <TabsContent value="lotes">
                     <div className="space-y-6">
                         <div className="flex justify-between items-center">
                             <h3 className="text-lg font-semibold">Setores e Lotes</h3>
-                            <div className="flex gap-2">
-                                <Button className="bg-[#400041] hover:bg-[#5a105b]" onClick={() => setIsSectorFormOpen(true)}>
-                                    <PlusCircle className="mr-2 h-4 w-4" />
-                                    Adicionar Setor
-                                </Button>
-
-                            </div>
+                            <Button onClick={() => setIsSectorFormOpen(true)} className="bg-[#400041] hover:bg-[#5a105b]">
+                                <PlusCircle className="mr-2 h-4 w-4" /> Adicionar Setor
+                            </Button>
                         </div>
-
                         {event.sectors.length === 0 ? (
-                            <Card className="p-6">
-                                <div className="text-center py-8 text-muted-foreground">
-                                    Nenhum setor cadastrado. Clique em "Adicionar Setor" para criar um novo setor.
-                                </div>
-                            </Card>
+                            <Card className="p-6 text-center text-muted-foreground">Nenhum setor cadastrado.</Card>
                         ) : (
-                            <div className="space-y-4">
-                                {event.sectors.map((sector) => {
-                                    const sectorBatches = getBatchesBySector(sector.id)
-                                    const stats = getSectorStats(sector.id)
-                                    const isExpanded = expandedSectors[sector.id]
-
-                                    return (
-                                        <EventCardSector
-                                            key={sector.id}
-                                            sectorBatches={sectorBatches}
-                                            setIsBatchFormOpen={setIsBatchFormOpen}
-                                            handleDeleteSector={handleDeleteSector}
-                                            sector={sector}
-                                            isExpanded={isExpanded}
-                                            stats={stats}
-                                            handleToggleBatchStatus={handleToggleBatchStatus}
-                                            handleDeleteBatch={handleDeleteBatch}
-                                            toggleSectorExpanded={toggleSectorExpanded}
-                                        />
-
-                                    )
-                                })}
-                            </div>
+                            event.sectors.map((sector) => (
+                                <EventCardSector
+                                    key={sector.id}
+                                    sector={sector}
+                                    isExpanded={expandedSectors[sector.id]}
+                                    toggleSectorExpanded={toggleSectorExpanded}
+                                    setIsBatchFormOpen={setIsBatchFormOpen}
+                                    handleDeleteSector={deleteSector}
+                                    handleDeleteBatch={deleteBatch}
+                                    handleToggleBatchStatus={toggleBatchStatus}
+                                />
+                            ))
                         )}
                     </div>
-
                 </TabsContent>
 
-                {/* Cupons de desconto */}
-                <EventCuponsDiscout coupons={coupons} handleCreateCoupon={handleCreateCoupon} handleDeleteCoupon={handleDeleteCoupon} />
+                <EventCuponsDiscout
+                    coupons={coupons}
+                    handleCreateCoupon={createCoupon}
+                    handleDeleteCoupon={(id) => setCoupons(coupons.filter(c => c.id !== id))}
+                />
 
-                {/* Cortesias */}
-                <EventCortesy courtesies={courtesies} event={event} handleCreateCourtesy={handleCreateCourtesy} isSubmittingCourtesy={isSubmittingCourtesy} handleResendCourtesy={handleResendCourtesy} handleDeleteCourtesy={handleDeleteCourtesy} />
+                <EventCortesy
+                    event={event}
+                    courtesies={courtesies}
+                    isSubmittingCourtesy={isSubmittingCourtesy}
+                    handleCreateCourtesy={createCourtesy}
+                    handleResendCourtesy={(id) => setCourtesies(courtesies.map(c => c.id === id ? { ...c, sent: true } : c))}
+                    handleDeleteCourtesy={(id) => setCourtesies(courtesies.filter(c => c.id !== id))}
+                />
 
-                {/* Vendas */}
                 <TabsContent value="vendas">
-                    <Card className="p-6">
-                        <div className="text-center py-8">
-                            <h3 className="text-lg font-semibold mb-2">Vendas</h3>
-                            <p className="text-muted-foreground">Informações detalhadas sobre vendas estarão disponíveis aqui.</p>
-                        </div>
-                    </Card>
+                    <Card className="p-6 text-center text-muted-foreground">Informações sobre vendas em breve.</Card>
                 </TabsContent>
 
-                {/* Participantes */}
                 <TabsContent value="participantes">
-                    <Card className="p-6">
-                        <div className="text-center py-8">
-                            <h3 className="text-lg font-semibold mb-2">Participantes</h3>
-                            <p className="text-muted-foreground">Informações sobre participantes estarão disponíveis aqui.</p>
-                        </div>
-                    </Card>
+                    <Card className="p-6 text-center text-muted-foreground">Informações sobre participantes em breve.</Card>
                 </TabsContent>
 
-                {/* Check-ins */}
-                <EventCheckin sampleCheckins={event?.checkins} />
-
+                <EventCheckin event={event} />
             </Tabs>
 
-            {/* Formulários em modais */}
             <EventCreationForm
                 isOpen={isFormOpen}
                 onClose={() => setIsFormOpen(false)}
@@ -488,14 +147,14 @@ export default function EventoDetalhesPage() {
             <SectorManagementForm
                 isOpen={isSectorFormOpen}
                 onClose={() => setIsSectorFormOpen(false)}
-                onSubmit={handleAddSector}
+                onSubmit={addSector}
                 eventName={event.title}
             />
 
             <BatchManagementForm
                 isOpen={isBatchFormOpen}
                 onClose={() => setIsBatchFormOpen(false)}
-                onSubmit={handleAddBatch}
+                onSubmit={addBatch}
                 eventName={event.title}
                 sectors={event.sectors}
             />

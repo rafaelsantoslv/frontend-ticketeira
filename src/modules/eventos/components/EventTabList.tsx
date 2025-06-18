@@ -8,8 +8,8 @@ export function EventTabList({ }) {
             <TabsTrigger value="lotes">Setores e Lotes</TabsTrigger>
             <TabsTrigger value="cupons">Cupons</TabsTrigger>
             <TabsTrigger value="cortesias">Cortesias</TabsTrigger>
-            <TabsTrigger value="vendas">Vendas</TabsTrigger>
-            <TabsTrigger value="participantes">Participantes</TabsTrigger>
+            <TabsTrigger value="vendas" disabled>Vendas</TabsTrigger>
+            <TabsTrigger value="participantes" disabled>Participantes</TabsTrigger>
             <TabsTrigger value="checkins">Check-ins</TabsTrigger>
         </TabsList>
     )

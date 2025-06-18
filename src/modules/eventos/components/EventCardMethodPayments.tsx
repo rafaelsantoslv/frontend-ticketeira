@@ -59,8 +59,8 @@ export function EventCardMethodPayments({ event }) {
                     <div className="flex items-center justify-between pt-2">
                         <div className="font-semibold text-[#400041]">Total</div>
                         <div className="text-right">
-                            <p className="font-semibold">{event.stats.totalSold} ingressos</p>
-                            <p className="font-semibold">{formatCurrency(event.stats.totalRevenue)}</p>
+                            <p className="font-semibold">{event.metrics.totalSales} ingressos</p>
+                            <p className="font-semibold">{formatCurrency(event.metrics.totalValue)}</p>
                         </div>
                     </div>
                 </div>

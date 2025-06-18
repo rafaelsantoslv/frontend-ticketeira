@@ -14,13 +14,14 @@ import {
 import { useRouter, usePathname } from "next/navigation"
 import { toast } from "@/components/ui/use-toast"
 import { ToastAction } from "@/components/ui/toast"
-import { useAuth2 } from "@/modules/auth/contexts/AuthContext"
+
 import Link from "next/link"
+import { useAuth } from "@/modules/auth/contexts/useAuth"
 
 export default function Header() {
   const router = useRouter()
   const pathname = usePathname()
-  const { user, logout } = useAuth2()
+  const { user, logout } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
 
   const handleSettings = () => {
