@@ -35,11 +35,47 @@ export const mockEvents: Event[] = [
         ],
 
         coupons: [
-            { id: "cp-1", code: "TECH20", discountPercentage: 20, active: true }
+            {
+                id: "cp-1",
+                code: "TECH20",
+                discountValue: 20,
+                active: true,
+                discountType: "percentage",
+                usageCount: 0,
+                usageLimit: 100,
+                unlimited: false,
+                createdAt: "2025-08-01T10:00:00Z"
+            },
+            {
+                id: "cp-2",
+                code: "TECH10",
+                discountValue: 10,
+                active: true,
+                discountType: "fixed",
+                usageCount: 0,
+                usageLimit: 100,
+                unlimited: false,
+                createdAt: "2025-08-01T10:00:00Z"
+            },
         ],
 
         courtesies: [
-            { id: "crt-1", name: "Fulano VIP", email: "vip@tech.com", sent: true }
+            {
+                id: "crt-1",
+                name: "Fulano VIP",
+                email: "vip@tech.com",
+                sent: true,
+                sector: "Pista",
+                createdAt: "2025-08-01T10:00:00Z"
+            },
+            {
+                id: "crt-2",
+                name: "Rafael dos Santos Batista",
+                email: "rafael@tech.com",
+                sent: false,
+                sector: "Camarote",
+                createdAt: "2025-08-01T10:00:00Z"
+            },
         ],
 
         sales: [
@@ -48,8 +84,33 @@ export const mockEvents: Event[] = [
         ],
 
         checkins: [
-            { id: "ck-1", ticketCode: "ABC123", name: "João Silva", sector: "Pista", batch: "Lote 1", validated: true, price: 40, date: "2025-09-12T18:30:00Z" },
-            { id: "ck-2", ticketCode: "XYZ789", name: "Maria Souza", sector: "Pista", batch: "Lote 2", validated: false, price: 60, date: "" },
+            {
+                id: "ck-1",
+                name: "João Silva",
+                email: "joao@gmail.com",
+                sector: "Pista",
+                status: "pending",
+                price: 40,
+                // date: "2025-09-12T18:30:00Z"
+            },
+            {
+                id: "ck-2",
+                name: "Marcos Silva",
+                email: "joao@gmail.com",
+                sector: "Pista",
+                status: "cancelled",
+                price: 40,
+                // date: "2025-09-12T18:30:00Z"
+            },
+            {
+                id: "ck-3",
+                name: "Mateus Silva",
+                email: "joao@gmail.com",
+                sector: "Pista",
+                status: "validated",
+                price: 40,
+                date: "2025-09-12T18:30:00Z"
+            },
         ],
 
         metrics: {

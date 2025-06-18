@@ -134,7 +134,7 @@ export default function EventoDetalhesPage() {
                     <Card className="p-6 text-center text-muted-foreground">Informações sobre participantes em breve.</Card>
                 </TabsContent>
 
-                <EventCheckin sampleCheckins={event.checkins} />
+                <EventCheckin event={event} />
             </Tabs>
 
             <EventCreationForm

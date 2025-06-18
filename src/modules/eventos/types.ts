@@ -38,8 +38,13 @@ export type Batch = {
 export type Coupon = {
     id: string
     code: string
-    discountPercentage: number
+    discountValue: number
     active: boolean
+    discountType: "percentage" | "fixed"
+    usageCount: number
+    usageLimit: number
+    unlimited: boolean
+    createdAt: string
 }
 
 export type Courtesy = {
@@ -47,6 +52,8 @@ export type Courtesy = {
     name: string
     email: string
     sent: boolean
+    sector: string
+    createdAt: string
 }
 
 export type Sale = {
@@ -63,13 +70,12 @@ export type Sale = {
 
 export type Checkin = {
     id: string
-    ticketCode: string
     name: string
+    email: string
     sector: string
-    batch: string
-    validated: boolean
+    status: "pending" | "validated" | "cancelled"
     price: number
-    date: string
+    date?: string
 }
 
 export type EventMetrics = {
