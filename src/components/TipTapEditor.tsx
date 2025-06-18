@@ -1,7 +1,7 @@
 import StarterKit from "@tiptap/starter-kit"
 import TiptapUnderline from "@tiptap/extension-underline"
 import { useEditor, EditorContent } from "@tiptap/react"
-import { EditTextMenuBar } from "./EditTextMenuBar"
+import { EditTextMenuBar } from "../modules/eventos/components/EditTextMenuBar"
 
 export const Tiptap = ({ onChange, content }) => {
     const editor = useEditor({

@@ -23,7 +23,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 import { useEventForm } from "@/hooks/useEventForm"
 import { useFormErrors } from "@/hooks/useEventFormError"
-import { RichTextEditor } from "../EditTextMenuBar"
+import { RichTextEditor } from "@/modules/eventos/components/EditTextMenuBar"
+
 
 export function CreateEventDialog({ isOpen, onClose }) {
 

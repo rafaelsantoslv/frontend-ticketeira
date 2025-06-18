@@ -19,6 +19,21 @@ export type Event = {
     metrics: EventMetrics
 }
 
+export type EventSummary = {
+    id: string
+    title: string
+    locationName: string
+    locationCity: string
+    locationState: string
+    category: string
+    imageUrl: string
+    isPublished: boolean
+    isFeatured: boolean
+    startDate: string
+    soldQuantity: number
+}
+
+
 export type Sector = {
     id: string
     name: string

@@ -1,9 +1,11 @@
 import { CalendarDays, MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardFooter } from "../ui/card";
-import { Button } from "../ui/button";
+
+
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 
 export function EventCard({ event }) {
     const renderEventStatus = (status: boolean) => {
