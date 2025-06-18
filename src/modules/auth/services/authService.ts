@@ -21,9 +21,15 @@ export const authService = {
     },
 
     async me() {
-        const response = await fetch(`${API_URL}/auth/me`, { credentials: 'include' })
-        if (!response.ok) return { success: false }
-        return await response.json()
+        try {
+            const response = await fetch(`${API_URL}/auth/me`, { credentials: 'include' })
+            const isJson = response.headers.get("content-type")?.includes("application/json")
+            const data = isJson ? await response.json() : null
+            if (!response.ok) return { success: false }
+            return { success: true, user: data?.user }
+        } catch (error) {
+            return { success: false, error: "Erro de rede ou servidor fora do ar" }
+        }
     },
 
     logout() {
