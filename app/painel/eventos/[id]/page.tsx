@@ -1,45 +1,28 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useParams } from "next/navigation"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import {
-    PlusCircle,
-    Trash2,
-    Calendar,
-    MapPin,
-    Clock,
-    Users,
-    Tag,
-    ArrowUpRight,
-    ChevronDown,
-    ChevronUp,
-    Edit,
-    Ticket,
-    DollarSign,
-    TicketMinusIcon,
-    Check,
-    Receipt,
-    QrCode,
-    CreditCard,
-} from "lucide-react"
-import EventCreationForm from "@/components/event-creation-form"
-import { toast } from "@/components/ui/use-toast"
-import BatchManagementForm from "@/components/batch-management-form"
-import SectorManagementForm from "@/components/sector-management-form"
-import { format } from "date-fns"
-import { ptBR } from "date-fns/locale"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import BatchManagementForm from "@/components/BatchManageForm"
+import SectorManagementForm from "@/components/SectorManageForm"
+import EventCreationForm from "@/components/eventos/EventCreationFormProps"
 import { Badge } from "@/components/ui/badge"
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
-import CouponForm from "@/components/coupon-form"
-import CourtesyForm from "@/components/courtesy-form"
-import { StatCard } from "@/components/stat-card"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import { Tabs, TabsContent } from "@/components/ui/tabs"
+import { toast } from "@/components/ui/use-toast"
+import {
+    PlusCircle
+} from "lucide-react"
+import { useParams } from "next/navigation"
+import { useEffect, useState } from "react"
+import { LoadingSpinner } from "@/components/LoadingSpinner"
+import { EventDashboard } from "@/components/eventos/[id]/EventDashboard"
+import { EventCardSector } from "@/components/eventos/[id]/EventCardSector"
+import { EventInfo } from "@/components/eventos/[id]/EventInfo"
+import { EventTabList } from "@/components/eventos/[id]/EventTabList"
+import { EventCuponsDiscout } from "@/components/eventos/[id]/EventCuponsDiscount"
+import { EventCheckin } from "@/components/eventos/[id]/EventCheckin"
+import { EventCortesy } from "@/components/eventos/[id]/EventCortesy"
+import { useEvent } from "@/hooks/useEvent"
 
-// Define types
 export type Batch = {
     id: string
     sectorId: string
@@ -104,14 +87,14 @@ export type Event = {
 }
 
 export default function EventoDetalhesPage() {
+
+
     const params = useParams()
     const eventId = params.id as string
 
     const [isFormOpen, setIsFormOpen] = useState(false)
     const [isBatchFormOpen, setIsBatchFormOpen] = useState(false)
     const [isSectorFormOpen, setIsSectorFormOpen] = useState(false)
-    const [event, setEvent] = useState<Event | null>(null)
-    const [isLoading, setIsLoading] = useState(true)
     const [expandedSectors, setExpandedSectors] = useState<Record<string, boolean>>({})
 
     // Adicionar os novos estados e funções para gerenciar cupons e cortesias
@@ -119,94 +102,16 @@ export default function EventoDetalhesPage() {
     const [courtesies, setCourtesies] = useState<Courtesy[]>([])
     const [isSubmittingCourtesy, setIsSubmittingCourtesy] = useState(false)
 
-    // Simular carregamento de dados do evento
-    useEffect(() => {
-        // Em um cenário real, isso seria uma chamada de API com o ID do evento
-        setTimeout(() => {
-            const mockEvent: Event = {
-                id: eventId,
-                title: eventId === "1" ? "LA VIE GLOW PARTY - INAUGURAÇÃO" : "Evento " + eventId,
-                date: new Date("2023-06-15"),
-                time: "22:00",
-                venueName: "Club XYZ",
-                address: "Rua das Flores, 123 - Blumenau, SC",
-                ageRating: "18+",
-                category: "Festa",
-                about: "Festa de inauguração com muita música eletrônica e efeitos visuais incríveis.",
-                image: "/placeholder.svg?height=200&width=400",
-                coverImage: "/placeholder.svg?height=400&width=800",
-                status: "active",
-                stats: {
-                    totalSold: 258,
-                    totalRevenue: 14060,
-                    ticketMedium: 48.76,
-                    checkins: 132,
-                },
-                sectors: [
-                    {
-                        id: "s1",
-                        name: "Pista",
-                        capacity: 500,
-                        description: "Área principal do evento",
-                    },
-                    {
-                        id: "s2",
-                        name: "Camarote",
-                        capacity: 100,
-                        description: "Área VIP com vista privilegiada",
-                    },
-                ],
-                batches: [
-                    {
-                        id: "1",
-                        sectorId: "s1",
-                        name: "1º Lote - Pista",
-                        quantity: 200,
-                        price: 50,
-                        active: false,
-                        sold: 200,
-                    },
-                    {
-                        id: "2",
-                        sectorId: "s1",
-                        name: "2º Lote - Pista",
-                        quantity: 300,
-                        price: 70,
-                        active: true,
-                        sold: 58,
-                    },
-                    {
-                        id: "3",
-                        sectorId: "s2",
-                        name: "Camarote VIP",
-                        quantity: 50,
-                        price: 120,
-                        active: true,
-                        sold: 0,
-                    },
-                    {
-                        id: "4",
-                        sectorId: "s2",
-                        name: "Camarote Premium",
-                        quantity: 50,
-                        price: 150,
-                        active: true,
-                        sold: 0,
-                    },
-                ],
-            }
 
-            // Inicializar todos os setores como expandidos
-            const initialExpandedState: Record<string, boolean> = {}
-            mockEvent.sectors.forEach((sector) => {
-                initialExpandedState[sector.id] = false
-            })
-            setExpandedSectors(initialExpandedState)
+    const {
+        getBatchesBySector,
+        getSectorStats,
+        event,
+        setEvent,
+        isLoading,
+        setIsLoading
+    } = useEvent()
 
-            setEvent(mockEvent)
-            setIsLoading(false)
-        }, 1000)
-    }, [eventId])
 
     const handleEditEvent = (data: Partial<Event>) => {
         if (!event) return
@@ -369,19 +274,6 @@ export default function EventoDetalhesPage() {
         }
     }
 
-    // Formatar valor monetário
-    const formatCurrency = (value: number) => {
-        return new Intl.NumberFormat("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-        }).format(value)
-    }
-
-    // Agrupar lotes por setor
-    const getBatchesBySector = (sectorId: string) => {
-        if (!event) return []
-        return event.batches.filter((batch) => batch.sectorId === sectorId)
-    }
     const handleCreateCoupon = (data: any) => {
         const newCoupon: Coupon = {
             id: `c${Date.now()}`,
@@ -470,25 +362,8 @@ export default function EventoDetalhesPage() {
         })
     }
 
-
-    // Calcular estatísticas do setor
-    const getSectorStats = (sectorId: string) => {
-        if (!event) return { totalSold: 0, totalRevenue: 0, totalCapacity: 0 }
-
-        const batches = getBatchesBySector(sectorId)
-        const totalSold = batches.reduce((sum, batch) => sum + batch.sold, 0)
-        const totalRevenue = batches.reduce((sum, batch) => sum + batch.sold * batch.price, 0)
-        const totalCapacity = batches.reduce((sum, batch) => sum + batch.quantity, 0)
-
-        return { totalSold, totalRevenue, totalCapacity }
-    }
-
     if (isLoading) {
-        return (
-            <div className="flex items-center justify-center h-64">
-                <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#400041] border-t-transparent"></div>
-            </div>
-        )
+        return <LoadingSpinner />
     }
 
     if (!event) {
@@ -510,260 +385,17 @@ export default function EventoDetalhesPage() {
                     <h1 className="text-2xl font-bold tracking-tight">{event.title}</h1>
                     {renderEventStatus(event.status)}
                 </div>
-
             </div>
 
             <Tabs defaultValue="dashboard">
-                <TabsList className="mb-4">
-                    <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-                    <TabsTrigger value="info">Informações</TabsTrigger>
-                    <TabsTrigger value="lotes">Setores e Lotes</TabsTrigger>
-                    <TabsTrigger value="cupons">Cupons</TabsTrigger>
-                    <TabsTrigger value="cortesias">Cortesias</TabsTrigger>
-                    <TabsTrigger value="vendas">Vendas</TabsTrigger>
-                    <TabsTrigger value="participantes">Participantes</TabsTrigger>
-                    <TabsTrigger value="checkins">Check-ins</TabsTrigger>
-                </TabsList>
+                {/* Tab List*/}
+                <EventTabList />
 
                 {/* Dashboard Tab */}
-                <TabsContent value="dashboard">
-                    <div className="space-y-6">
-                        {/* Resumo geral */}
-                        <Card className="bg-white">
-                            <CardHeader className="pb-2">
-                                <CardTitle className="text-lg">Resumo de Vendas</CardTitle>
-                            </CardHeader>
-                            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                                <StatCard title="Total de Ingressos" icon={<Ticket className="h-4 w-4 text-muted-foreground" />} value={event.stats.totalSold} description="Vendidos" />
-                                <StatCard title="Ticket Médio" icon={<TicketMinusIcon className="h-4 w-4 text-muted-foreground" />} value={formatCurrency(event.stats.ticketMedium)} />
-                                <StatCard title="Check-ins" icon={<Check className="h-4 w-4 text-muted-foreground" />} value={`${event.stats.checkins} / ${event.stats.totalSold}`}
-                                    description="Validados" />
-                                <StatCard title="Valor Total" icon={<DollarSign className="h-4 w-4 text-muted-foreground" />} value={formatCurrency(event.stats.totalRevenue)} description="Arrecadado" />
-                            </div>
-
-
-                        </Card>
-
-                        {/* Vendas por Setor */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <Card className="bg-white">
-                                <CardHeader className="pb-2">
-                                    <CardTitle className="text-lg">Vendas por Setor</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="space-y-6">
-                                        {event.sectors.map((sector) => {
-                                            const sectorBatches = getBatchesBySector(sector.id)
-                                            const stats = getSectorStats(sector.id)
-
-                                            return (
-                                                <div key={sector.id} className="space-y-2">
-                                                    {/* Cabeçalho do setor */}
-                                                    <div className="grid grid-cols-3 border-b pb-2">
-                                                        <div className="font-semibold text-lg text-[#400041] text-left pl-4">{sector.name}</div>
-                                                        <div className="text-base font-semibold text-left pl-4">{stats.totalSold} ingressos</div>
-                                                        <div className="text-base font-semibold text-left pl-4">{formatCurrency(stats.totalRevenue)}</div>
-                                                    </div>
-
-                                                    {/* Lotes do setor */}
-                                                    <div className="space-y-1">
-                                                        {sectorBatches.map((batch) => {
-                                                            const batchTotal = batch.sold * batch.price;
-                                                            return (
-                                                                <div key={batch.id} className="grid grid-cols-3 py-1 text-sm">
-                                                                    <div className="font-medium text-gray-600 text-left pl-4">{batch.name}</div>
-                                                                    <div className="text-gray-500 text-left pl-4">
-                                                                        {batch.sold} x {formatCurrency(batch.price)}
-                                                                    </div>
-                                                                    <div className="text-gray-600 text-left pl-4">{formatCurrency(batchTotal)}</div>
-                                                                </div>
-                                                            );
-                                                        })}
-                                                    </div>
-                                                </div>
-                                            )
-                                        })}
-                                        <div className="grid grid-cols-3 border-t pt-3 mt-4 font-semibold text-base">
-                                            <div className="text-[#400041] text-left pl-4">Total</div>
-                                            <div className="text-left pl-4">{event.stats.totalSold} ingressos</div>
-                                            <div className="text-left pl-4">{formatCurrency(event.stats.totalRevenue)}</div>
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                            <Card className="bg-white">
-                                <CardHeader className="pb-2">
-                                    <CardTitle className="text-lg">Métodos de Pagamento</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="space-y-4">
-                                        {/* Cartão de Crédito */}
-                                        <div className="flex items-center justify-between border-b pb-3">
-                                            <div className="flex items-center">
-                                                <CreditCard className="h-5 w-5 mr-3 text-[#400041]" />
-                                                <div>
-                                                    <p className="font-medium">Cartão de Crédito</p>
-                                                    <p className="text-sm text-muted-foreground">Visa, Mastercard, Elo</p>
-                                                </div>
-                                            </div>
-                                            <div className="text-right">
-                                                <p className="font-medium">156 ingressos</p>
-                                                <p className="text-sm text-muted-foreground">{formatCurrency(7800)}</p>
-                                            </div>
-                                        </div>
-
-                                        {/* PIX */}
-                                        <div className="flex items-center justify-between border-b pb-3">
-                                            <div className="flex items-center">
-                                                <QrCode className="h-5 w-5 mr-3 text-[#400041]" />
-                                                <div>
-                                                    <p className="font-medium">PIX</p>
-                                                    <p className="text-sm text-muted-foreground">Pagamento instantâneo</p>
-                                                </div>
-                                            </div>
-                                            <div className="text-right">
-                                                <p className="font-medium">82 ingressos</p>
-                                                <p className="text-sm text-muted-foreground">{formatCurrency(4100)}</p>
-                                            </div>
-                                        </div>
-
-                                        {/* Boleto */}
-                                        <div className="flex items-center justify-between border-b pb-3">
-                                            <div className="flex items-center">
-                                                <Receipt className="h-5 w-5 mr-3 text-[#400041]" />
-                                                <div>
-                                                    <p className="font-medium">Boleto</p>
-                                                    <p className="text-sm text-muted-foreground">Pagamento bancário</p>
-                                                </div>
-                                            </div>
-                                            <div className="text-right">
-                                                <p className="font-medium">20 ingressos</p>
-                                                <p className="text-sm text-muted-foreground">{formatCurrency(680)}</p>
-                                            </div>
-                                        </div>
-
-                                        {/* Total */}
-                                        <div className="flex items-center justify-between pt-2">
-                                            <div className="font-semibold text-[#400041]">Total</div>
-                                            <div className="text-right">
-                                                <p className="font-semibold">{event.stats.totalSold} ingressos</p>
-                                                <p className="font-semibold">{formatCurrency(event.stats.totalRevenue)}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
-
-                        </div>
-
-                        {/* Gráfico de vendas por dia */}
-                        <Card>
-                            <CardHeader className="pb-2">
-                                <CardTitle className="text-lg">Vendas por Dia</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="h-[250px] flex items-center justify-center bg-gray-50 rounded-md">
-                                    <p className="text-muted-foreground">Gráfico de vendas por dia</p>
-                                </div>
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader className="pb-2">
-                                <div className="flex items-center justify-between">
-                                    <CardTitle className="text-lg">Vendas Recentes</CardTitle>
-                                    <Button variant="ghost" size="sm" className="text-[#400041]">
-                                        Ver todas
-                                        <ArrowUpRight className="ml-1 h-4 w-4" />
-                                    </Button>
-                                </div>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="space-y-4">
-                                    {[1, 2, 3].map((i) => (
-                                        <div key={i} className="flex items-center justify-between border-b pb-3">
-                                            <div>
-                                                <p className="font-medium">Comprador {i}</p>
-                                                <p className="text-sm text-muted-foreground">comprador{i}@email.com</p>
-                                            </div>
-                                            <div className="text-right">
-                                                <p className="font-medium">{formatCurrency(70 * i)}</p>
-                                                <p className="text-sm text-muted-foreground">
-                                                    {format(new Date(2023, 5, 10 + i), "dd/MM/yyyy HH:mm")}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
-                </TabsContent>
+                <EventDashboard getBatchesBySector={getBatchesBySector} getSectorStats={getSectorStats} event={event} />
 
                 {/* Info Tab */}
-                <TabsContent value="info">
-                    <Card className="overflow-hidden p-6">
-                        <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg font-semibold">Lotes</h3>
-                            <Button className="bg-[#400041] hover:bg-[#5a105b]" onClick={() => setIsFormOpen(true)}>
-                                <Edit className="mr-2 h-4 w-4" />
-                                Editar Evento
-                            </Button>
-                        </div>
-                        <div className="flex flex-col md:flex-row">
-                            <div className="md:w-1/3">
-                                <img src={event.image || "/placeholder.svg"} alt={event.title} className="h-full w-full object-cover" />
-                            </div>
-                            <div className="md:w-2/3 p-6">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                    <div>
-                                        <div className="flex items-center text-muted-foreground mb-1">
-                                            <Calendar className="mr-2 h-4 w-4" />
-                                            <span>Data e Hora</span>
-                                        </div>
-                                        <p className="font-medium">
-                                            {format(new Date(event.date), "PPP", { locale: ptBR })} às {event.time}
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <div className="flex items-center text-muted-foreground mb-1">
-                                            <MapPin className="mr-2 h-4 w-4" />
-                                            <span>Local</span>
-                                        </div>
-                                        <p className="font-medium">{event.venueName}</p>
-                                    </div>
-                                    <div>
-                                        <div className="flex items-center text-muted-foreground mb-1">
-                                            <MapPin className="mr-2 h-4 w-4" />
-                                            <span>Endereço</span>
-                                        </div>
-                                        <p className="font-medium">{event.address}</p>
-                                    </div>
-                                    <div>
-                                        <div className="flex items-center text-muted-foreground mb-1">
-                                            <Tag className="mr-2 h-4 w-4" />
-                                            <span>Categoria</span>
-                                        </div>
-                                        <p className="font-medium">{event.category}</p>
-                                    </div>
-                                    <div>
-                                        <div className="flex items-center text-muted-foreground mb-1">
-                                            <Users className="mr-2 h-4 w-4" />
-                                            <span>Classificação</span>
-                                        </div>
-                                        <p className="font-medium">{event.ageRating}</p>
-                                    </div>
-                                </div>
-                                <div className="mb-4">
-                                    <div className="flex items-center text-muted-foreground mb-1">
-                                        <Clock className="mr-2 h-4 w-4" />
-                                        <span>Sobre</span>
-                                    </div>
-                                    <p className="text-sm">{event.about}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </Card>
-                </TabsContent>
+                <EventInfo event={event} setIsFormOpen={setIsFormOpen} />
 
                 {/* Setores e Lotes Tab */}
                 <TabsContent value="lotes">
@@ -793,96 +425,19 @@ export default function EventoDetalhesPage() {
                                     const isExpanded = expandedSectors[sector.id]
 
                                     return (
-                                        <Card key={sector.id} className="overflow-hidden">
-                                            <Collapsible open={isExpanded} onOpenChange={() => toggleSectorExpanded(sector.id)}>
-                                                <div className="p-4 flex items-center justify-between bg-gray-50 border-b">
-                                                    <div className="flex items-center gap-2">
-                                                        <CollapsibleTrigger asChild>
-                                                            <Button variant="ghost" size="sm" className="p-1">
-                                                                {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                                                            </Button>
-                                                        </CollapsibleTrigger>
-                                                        <div>
-                                                            <h4 className="font-medium text-lg">{sector.name}</h4>
-                                                            <p className="text-sm text-muted-foreground">
-                                                                Capacidade: {sector.capacity} • Vendidos: {stats.totalSold} • Receita:{" "}
-                                                                {formatCurrency(stats.totalRevenue)}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex gap-2">
-                                                        <Button size="sm" variant="outline" onClick={() => setIsBatchFormOpen(true)}>
-                                                            <PlusCircle className="mr-1 h-4 w-4" />
-                                                            Lote
-                                                        </Button>
-                                                        <Button
-                                                            size="sm"
-                                                            variant="outline"
-                                                            className="text-red-500 hover:text-red-700"
-                                                            onClick={() => handleDeleteSector(sector.id)}
-                                                            disabled={sectorBatches.length > 0}
-                                                        >
-                                                            <Trash2 className="h-4 w-4" />
-                                                        </Button>
-                                                    </div>
-                                                </div>
+                                        <EventCardSector
+                                            key={sector.id}
+                                            sectorBatches={sectorBatches}
+                                            setIsBatchFormOpen={setIsBatchFormOpen}
+                                            handleDeleteSector={handleDeleteSector}
+                                            sector={sector}
+                                            isExpanded={isExpanded}
+                                            stats={stats}
+                                            handleToggleBatchStatus={handleToggleBatchStatus}
+                                            handleDeleteBatch={handleDeleteBatch}
+                                            toggleSectorExpanded={toggleSectorExpanded}
+                                        />
 
-                                                <CollapsibleContent>
-                                                    <div className="p-4">
-                                                        {sector.description && (
-                                                            <p className="text-sm text-muted-foreground mb-4">{sector.description}</p>
-                                                        )}
-
-                                                        {sectorBatches.length === 0 ? (
-                                                            <div className="text-center py-4 text-muted-foreground">
-                                                                Nenhum lote cadastrado para este setor.
-                                                            </div>
-                                                        ) : (
-                                                            <div className="space-y-3">
-                                                                {sectorBatches.map((batch) => (
-                                                                    <div
-                                                                        key={batch.id}
-                                                                        className="flex items-center justify-between p-3 border rounded-md"
-                                                                    >
-                                                                        <div>
-                                                                            <div className="flex items-center">
-                                                                                <span className="font-medium">{batch.name}</span>
-                                                                                <span
-                                                                                    className={`ml-2 text-xs px-2 py-0.5 rounded-full ${batch.active ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-                                                                                        }`}
-                                                                                >
-                                                                                    {batch.active ? "Ativo" : "Inativo"}
-                                                                                </span>
-                                                                            </div>
-                                                                            <div className="text-sm text-gray-500">
-                                                                                {formatCurrency(batch.price)} • {batch.sold}/{batch.quantity} ingressos vendidos
-                                                                            </div>
-                                                                        </div>
-                                                                        <div className="flex space-x-2">
-                                                                            <Button
-                                                                                size="sm"
-                                                                                variant={batch.active ? "default" : "outline"}
-                                                                                onClick={() => handleToggleBatchStatus(batch.id)}
-                                                                            >
-                                                                                {batch.active ? "Desativar" : "Ativar"}
-                                                                            </Button>
-                                                                            <Button
-                                                                                size="sm"
-                                                                                variant="outline"
-                                                                                className="text-red-500 hover:text-red-700"
-                                                                                onClick={() => handleDeleteBatch(batch.id)}
-                                                                            >
-                                                                                <Trash2 className="h-4 w-4" />
-                                                                            </Button>
-                                                                        </div>
-                                                                    </div>
-                                                                ))}
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                </CollapsibleContent>
-                                            </Collapsible>
-                                        </Card>
                                     )
                                 })}
                             </div>
@@ -892,153 +447,10 @@ export default function EventoDetalhesPage() {
                 </TabsContent>
 
                 {/* Cupons de desconto */}
-                <TabsContent value="cupons">
-                    <div className="space-y-6">
-                        <div className="flex justify-between items-center">
-                            <h3 className="text-lg font-semibold">Cupons de Desconto</h3>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <Card className="p-6">
-                                <CardHeader className="px-0 pt-0">
-                                    <CardTitle className="text-lg">Criar Novo Cupom</CardTitle>
-                                </CardHeader>
-                                <CardContent className="px-0 pb-0">
-                                    <CouponForm onSubmit={handleCreateCoupon} />
-                                </CardContent>
-                            </Card>
-
-                            <Card className="p-6">
-                                <CardHeader className="px-0 pt-0">
-                                    <CardTitle className="text-lg">Cupons Ativos</CardTitle>
-                                </CardHeader>
-                                <CardContent className="px-0 pb-0">
-                                    {coupons.length === 0 ? (
-                                        <div className="text-center py-8 text-muted-foreground">
-                                            Nenhum cupom cadastrado. Crie um novo cupom ao lado.
-                                        </div>
-                                    ) : (
-                                        <div className="space-y-4">
-                                            {coupons.map((coupon) => (
-                                                <div key={coupon.id} className="flex items-center justify-between p-3 border rounded-md">
-                                                    <div>
-                                                        <div className="flex items-center">
-                                                            <span className="font-medium">{coupon.code}</span>
-                                                            <span
-                                                                className={`ml-2 text-xs px-2 py-0.5 rounded-full ${coupon.active ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-                                                                    }`}
-                                                            >
-                                                                {coupon.active ? "Ativo" : "Inativo"}
-                                                            </span>
-                                                        </div>
-                                                        <div className="text-sm text-gray-500">
-                                                            {coupon.discountType === "percentage"
-                                                                ? `${coupon.discountValue}% de desconto`
-                                                                : `${formatCurrency(coupon.discountValue)} de desconto`}
-                                                            {coupon.unlimited
-                                                                ? " • Uso ilimitado"
-                                                                : ` • ${coupon.usageCount}/${coupon.usageLimit} usos`}
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex space-x-2">
-                                                        <Button
-                                                            size="sm"
-                                                            variant="outline"
-                                                            className="text-red-500 hover:text-red-700"
-                                                            onClick={() => handleDeleteCoupon(coupon.id)}
-                                                        >
-                                                            <Trash2 className="h-4 w-4" />
-                                                        </Button>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </CardContent>
-                            </Card>
-                        </div>
-                    </div>
-                </TabsContent>
+                <EventCuponsDiscout coupons={coupons} handleCreateCoupon={handleCreateCoupon} handleDeleteCoupon={handleDeleteCoupon} />
 
                 {/* Cortesias */}
-                <TabsContent value="cortesias">
-                    <div className="space-y-6">
-                        <div className="flex justify-between items-center">
-                            <h3 className="text-lg font-semibold">Ingressos Cortesia</h3>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <Card className="p-6">
-                                <CardHeader className="px-0 pt-0">
-                                    <CardTitle className="text-lg">Gerar Nova Cortesia</CardTitle>
-                                </CardHeader>
-                                <CardContent className="px-0 pb-0">
-                                    <CourtesyForm
-                                        onSubmit={handleCreateCourtesy}
-                                        sectors={event.sectors}
-                                        isSubmitting={isSubmittingCourtesy}
-                                    />
-                                </CardContent>
-                            </Card>
-
-                            <Card className="p-6">
-                                <CardHeader className="px-0 pt-0">
-                                    <CardTitle className="text-lg">Cortesias Geradas</CardTitle>
-                                </CardHeader>
-                                <CardContent className="px-0 pb-0">
-                                    {courtesies.length === 0 ? (
-                                        <div className="text-center py-8 text-muted-foreground">
-                                            Nenhuma cortesia gerada. Crie uma nova cortesia ao lado.
-                                        </div>
-                                    ) : (
-                                        <div className="space-y-4">
-                                            {courtesies.map((courtesy) => {
-                                                const sector = event.sectors.find((s) => s.id === courtesy.sectorId)
-
-                                                return (
-                                                    <div key={courtesy.id} className="flex items-center justify-between p-3 border rounded-md">
-                                                        <div>
-                                                            <div className="flex items-center">
-                                                                <span className="font-medium">
-                                                                    {courtesy.firstName} {courtesy.lastName}
-                                                                </span>
-                                                                <span
-                                                                    className={`ml-2 text-xs px-2 py-0.5 rounded-full ${courtesy.sent ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"
-                                                                        }`}
-                                                                >
-                                                                    {courtesy.sent ? "Enviado" : "Pendente"}
-                                                                </span>
-                                                            </div>
-                                                            <div className="text-sm text-gray-500">
-                                                                {courtesy.email} • {sector?.name || "Setor desconhecido"}
-                                                            </div>
-                                                            <div className="text-xs text-gray-400 mt-1">Código: {courtesy.ticketCode}</div>
-                                                        </div>
-                                                        <div className="flex space-x-2">
-                                                            {!courtesy.sent && (
-                                                                <Button size="sm" variant="outline" onClick={() => handleResendCourtesy(courtesy.id)}>
-                                                                    Enviar
-                                                                </Button>
-                                                            )}
-                                                            <Button
-                                                                size="sm"
-                                                                variant="outline"
-                                                                className="text-red-500 hover:text-red-700"
-                                                                onClick={() => handleDeleteCourtesy(courtesy.id)}
-                                                            >
-                                                                <Trash2 className="h-4 w-4" />
-                                                            </Button>
-                                                        </div>
-                                                    </div>
-                                                )
-                                            })}
-                                        </div>
-                                    )}
-                                </CardContent>
-                            </Card>
-                        </div>
-                    </div>
-                </TabsContent>
+                <EventCortesy courtesies={courtesies} event={event} handleCreateCourtesy={handleCreateCourtesy} isSubmittingCourtesy={isSubmittingCourtesy} handleResendCourtesy={handleResendCourtesy} handleDeleteCourtesy={handleDeleteCourtesy} />
 
                 {/* Vendas */}
                 <TabsContent value="vendas">
@@ -1049,6 +461,7 @@ export default function EventoDetalhesPage() {
                         </div>
                     </Card>
                 </TabsContent>
+
                 {/* Participantes */}
                 <TabsContent value="participantes">
                     <Card className="p-6">
@@ -1059,94 +472,9 @@ export default function EventoDetalhesPage() {
                     </Card>
                 </TabsContent>
 
-                <TabsContent value="checkins">
-                    <div className="space-y-6">
-                        <div className="flex justify-between items-center">
-                            <h3 className="text-lg font-semibold">Check-ins</h3>
-                            <div className="flex gap-2">
-                                <Input placeholder="Buscar por nome ou código..." className="w-64" />
-                                <Select defaultValue="todos">
-                                    <SelectTrigger className="w-[180px]">
-                                        <SelectValue placeholder="Status" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="todos">Todos</SelectItem>
-                                        <SelectItem value="validados">Validados</SelectItem>
-                                        <SelectItem value="nao-validados">Não validados</SelectItem>
-                                        <SelectItem value="cancelados">Cancelados</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
+                {/* Check-ins */}
+                <EventCheckin sampleCheckins={event?.checkins} />
 
-                        <Card>
-                            <CardContent className="p-0">
-                                <div className="relative w-full overflow-auto">
-                                    <table className="w-full caption-bottom text-sm">
-                                        <thead className="[&_tr]:border-b">
-                                            <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                                                <th className="h-12 px-4 text-left align-middle font-medium">Código</th>
-                                                <th className="h-12 px-4 text-left align-middle font-medium">Nome</th>
-                                                <th className="h-12 px-4 text-left align-middle font-medium">Setor</th>
-                                                <th className="h-12 px-4 text-left align-middle font-medium">Lote</th>
-                                                <th className="h-12 px-4 text-left align-middle font-medium">Status</th>
-                                                <th className="h-12 px-4 text-left align-middle font-medium">Data/Hora</th>
-                                                <th className="h-12 px-4 text-left align-middle font-medium">Ações</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="[&_tr:last-child]:border-0">
-                                            <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                                                <td className="p-4 align-middle">#TK-001</td>
-                                                <td className="p-4 align-middle">João Silva</td>
-                                                <td className="p-4 align-middle">Pista</td>
-                                                <td className="p-4 align-middle">1º Lote</td>
-                                                <td className="p-4 align-middle">
-                                                    <Badge className="bg-green-500">Validado</Badge>
-                                                </td>
-                                                <td className="p-4 align-middle">15/06/2023 22:45</td>
-                                                <td className="p-4 align-middle">
-                                                    <Button variant="outline" size="sm" className="text-red-500">
-                                                        Cancelar validação
-                                                    </Button>
-                                                </td>
-                                            </tr>
-                                            <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                                                <td className="p-4 align-middle">#TK-002</td>
-                                                <td className="p-4 align-middle">Maria Souza</td>
-                                                <td className="p-4 align-middle">Camarote</td>
-                                                <td className="p-4 align-middle">VIP</td>
-                                                <td className="p-4 align-middle">
-                                                    <Badge className="bg-yellow-500">Não validado</Badge>
-                                                </td>
-                                                <td className="p-4 align-middle">-</td>
-                                                <td className="p-4 align-middle">
-                                                    <Button variant="outline" size="sm" className="text-green-500">
-                                                        Validar
-                                                    </Button>
-                                                </td>
-                                            </tr>
-                                            <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                                                <td className="p-4 align-middle">#TK-003</td>
-                                                <td className="p-4 align-middle">Carlos Oliveira</td>
-                                                <td className="p-4 align-middle">Pista</td>
-                                                <td className="p-4 align-middle">2º Lote</td>
-                                                <td className="p-4 align-middle">
-                                                    <Badge className="bg-red-500">Cancelado</Badge>
-                                                </td>
-                                                <td className="p-4 align-middle">15/06/2023 23:10</td>
-                                                <td className="p-4 align-middle">
-                                                    <Button variant="outline" size="sm" disabled>
-                                                        Cancelado
-                                                    </Button>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
-                </TabsContent>
             </Tabs>
 
             {/* Formulários em modais */}
