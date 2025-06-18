@@ -4,7 +4,7 @@ import { EventCardSalesSector } from "./EventCardSalesSector";
 import { EventCardMethodPayments } from "./EventCardMethodPayments";
 import { EventCardRecentSales } from "./EventCardRecentSales";
 
-export function EventDashboard({ getBatchesBySector, getSectorStats, event }) {
+export function EventDashboard({ event }) {
 
     return (
         <TabsContent value="dashboard">
@@ -13,10 +13,10 @@ export function EventDashboard({ getBatchesBySector, getSectorStats, event }) {
                 <EventCardOverview event={event} />
                 {/* Vendas por Setor */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <EventCardSalesSector event={event} getBatchesBySector={getBatchesBySector} getSectorStats={getSectorStats} />
+                    <EventCardSalesSector event={event} />
                     <EventCardMethodPayments event={event} />
                 </div>
-                <EventCardRecentSales />
+                <EventCardRecentSales event={event} />
             </div>
         </TabsContent>
     )

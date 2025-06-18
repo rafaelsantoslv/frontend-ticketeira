@@ -4,7 +4,7 @@ import { formatCurrency } from "@/utils/formatCurrency";
 import { ArrowUpRight } from "lucide-react";
 import { format } from "date-fns"
 
-export function EventCardRecentSales({ }) {
+export function EventCardRecentSales({ event }) {
     return (
         <Card>
             <CardHeader className="pb-2">
@@ -18,16 +18,16 @@ export function EventCardRecentSales({ }) {
             </CardHeader>
             <CardContent>
                 <div className="space-y-4">
-                    {[1, 2, 3, 4, 5].map((i) => (
-                        <div key={i} className="flex items-center justify-between border-b pb-3">
+                    {event.sales.map((sales) => (
+                        <div key={sales.id} className="flex items-center justify-between border-b pb-3">
                             <div>
-                                <p className="font-medium">Comprador {i}</p>
-                                <p className="text-sm text-muted-foreground">comprador{i}@email.com</p>
+                                <p className="font-medium">{sales.name}</p>
+                                <p className="text-sm text-muted-foreground">{sales.email}</p>
                             </div>
                             <div className="text-right">
-                                <p className="font-medium">{formatCurrency(70 * i)}</p>
+                                <p className="font-medium">{formatCurrency(sales.amount)}</p>
                                 <p className="text-sm text-muted-foreground">
-                                    {format(new Date(2023, 5, 10 + i), "dd/MM/yyyy HH:mm")}
+                                    {format(sales.date, "dd/MM/yyyy HH:mm")}
                                 </p>
                             </div>
                         </div>
