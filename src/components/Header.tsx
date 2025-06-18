@@ -14,7 +14,7 @@ import {
 import { useRouter, usePathname } from "next/navigation"
 import { toast } from "@/components/ui/use-toast"
 import { ToastAction } from "@/components/ui/toast"
-import { useAuth2 } from "@/contexts/AuthContext"
+import { useAuth2 } from "@/modules/auth/contexts/AuthContext"
 import Link from "next/link"
 
 export default function Header() {

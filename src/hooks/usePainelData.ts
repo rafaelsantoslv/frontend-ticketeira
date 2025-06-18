@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { EventSummary, StatsSummary } from "../types/PainelType"
 import { mockEvents, mockStats } from "../mock/painel"
-import { useAuth2 } from "@/contexts/AuthContext"
+import { useAuth2 } from "@/modules/auth/contexts/AuthContext"
 
 export function usePainelData() {
     const { validateToken } = useAuth2()

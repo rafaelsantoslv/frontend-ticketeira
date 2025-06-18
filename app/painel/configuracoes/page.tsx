@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { useToast } from "@/components/ui/use-toast"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { useAuth2 } from "@/contexts/AuthContext"
+import { useAuth2 } from "@/modules/auth/contexts/AuthContext"
 import { Loader2, Upload } from "lucide-react"
 
 export default function ConfiguracoesPage() {

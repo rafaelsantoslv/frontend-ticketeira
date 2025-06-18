@@ -1,28 +1,16 @@
 "use client"
 
-import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { Loader2 } from "lucide-react"
-
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-
-import { useAuth2 } from "@/contexts/AuthContext"
-import { useFormSubmit } from "@/hooks/useFormSubmit"
-import { User } from "@/types/Auth"
+import { useAuth } from "@/modules/auth/contexts/useAuth"
 import { loginSchema, LoginFormData } from "@/modules/auth/schemas/loginSchema"
-
+import { toast } from "sonner"
 
 export function LoginForm() {
-    const router = useRouter()
-    const { login } = useAuth2()
-
-    const { isLoading, error, handleSubmit } = useFormSubmit<User>({
-        onSuccess: () => router.push("/painel"),
-    })
+    const { login } = useAuth()
 
     const form = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
@@ -32,17 +20,15 @@ export function LoginForm() {
         },
     })
 
-    const onSubmit = (values: LoginFormData) => {
-        handleSubmit(() => login({ email: values.email, password: values.password }))
+    const onSubmit = async (data: LoginFormData) => {
+        const result = await login(data.email, data.password)
+        if (!result.success) {
+            toast.error(result.error || "Erro ao fazer login. Verifique suas credenciais.")
+        }
     }
 
     return (
         <>
-            {error && (
-                <Alert variant="destructive" className="mb-4">
-                    <AlertDescription>{error}</AlertDescription>
-                </Alert>
-            )}
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                     <FormField
@@ -55,7 +41,8 @@ export function LoginForm() {
                                     <Input
                                         placeholder="seu@email.com"
                                         autoComplete="email"
-                                        {...field} />
+                                        {...field}
+                                    />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -72,21 +59,15 @@ export function LoginForm() {
                                         type="password"
                                         placeholder="******"
                                         autoComplete="current-password"
-                                        {...field} />
+                                        {...field}
+                                    />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
-                    <Button type="submit" className="w-full bg-[#400041] hover:bg-[#5a105b] text-white" disabled={isLoading}>
-                        {isLoading ? (
-                            <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin " />
-                                Entrando...
-                            </>
-                        ) : (
-                            "Entrar"
-                        )}
+                    <Button type="submit" className="w-full bg-[#400041] hover:bg-[#5a105b] text-white">
+                        Entrar
                     </Button>
                 </form>
             </Form>
