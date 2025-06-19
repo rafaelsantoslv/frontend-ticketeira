@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react"
 import { EventSummary, StatsSummary } from "../types/PainelType"
 import { mockEvents, mockStats } from "../mock/painel"
-import { useAuth2 } from "@/modules/auth/contexts/AuthContext"
+import { useAuth } from "@/modules/auth/contexts/useAuth"
+
 
 export function usePainelData() {
-    const { validateToken } = useAuth2()
+    const { me } = useAuth()
     const [recentEvents, setRecentEvents] = useState<EventSummary[]>([])
     const [stats, setStats] = useState<StatsSummary>({
         totalEvents: 0,
@@ -15,7 +16,7 @@ export function usePainelData() {
     const [isLoading, setIsLoading] = useState(true)
     useEffect(() => {
         const fetchData = async () => {
-            await validateToken()
+            await me()
 
             // Se chegou aqui, o token é válido
             // Em um cenário real, isso seria uma chamada de API

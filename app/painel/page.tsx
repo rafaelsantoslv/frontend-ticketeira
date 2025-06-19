@@ -2,20 +2,22 @@
 
 import Link from "next/link"
 import { CalendarDays, Clock, DollarSign, Plus, Ticket } from "lucide-react"
+import { format, isValid } from "date-fns"
+
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { useAuth2 } from "@/modules/auth/contexts/AuthContext"
-import { usePainelData } from "../../hooks/usePainelData"
-import { formatCurrency } from "@/utils/formatCurrency"
 import { StatCard } from "@/components/StatCard"
-import { RecentEventCard } from "@/components/eventos/EventRecentCard"
+import { RecentEventCard } from "@/modules/eventos/components/EventRecentCard"
 
-
+import { useAuth } from "@/modules/auth/contexts/useAuth"
+import { usePainelData } from "@/modules/painel/hooks/usePainelData"
+import { formatCurrency } from "@/utils/formatCurrency"
 
 export default function PainelPage() {
-    const { user } = useAuth2()
+    const { user } = useAuth()
     const { recentEvents, stats, isLoading } = usePainelData()
 
+    const upcomingEvent = recentEvents.find((e) => e.status === "upcoming")
 
     return (
         <div className="space-y-6">
@@ -24,7 +26,7 @@ export default function PainelPage() {
                 <div>
                     <h1 className="text-2xl font-bold tracking-tight">Bem-vindo ao Painel</h1>
                     <p className="text-muted-foreground">
-                        Olá, {user?.name ? user.name : "Usuário"}! Aqui está uma visão geral dos seus eventos ativos.
+                        Olá, {user?.name || "Usuário"}! Aqui está uma visão geral dos seus eventos ativos.
                     </p>
                 </div>
                 <div className="mt-4 md:mt-0">
@@ -45,7 +47,7 @@ export default function PainelPage() {
                     value={
                         isLoading
                             ? "-"
-                            : stats.activeEvents > 0
+                            : typeof stats.activeEvents === "number"
                                 ? stats.activeEvents
                                 : "Nenhum evento ativo"
                     }
@@ -64,7 +66,7 @@ export default function PainelPage() {
                     value={
                         isLoading
                             ? "-"
-                            : stats.totalTicketsSold > 0
+                            : typeof stats.totalTicketsSold === "number"
                                 ? stats.totalTicketsSold
                                 : "Nenhum ingresso vendido"
                     }
@@ -102,17 +104,17 @@ export default function PainelPage() {
                     value={
                         isLoading
                             ? "-"
-                            : recentEvents.find((e) => e.status === "upcoming")?.date || "Nenhum"
+                            : upcomingEvent?.date && isValid(new Date(upcomingEvent.date))
+                                ? format(new Date(upcomingEvent.date), "dd/MM/yyyy")
+                                : "Nenhum"
                     }
                     description={
                         isLoading
                             ? ""
-                            : recentEvents.find((e) => e.status === "upcoming")?.title || "Nenhum evento agendado"
+                            : upcomingEvent?.title || "Nenhum evento agendado"
                     }
                 />
-
             </div>
-
 
             {/* Lista de eventos recentes */}
             <Card>
@@ -123,7 +125,7 @@ export default function PainelPage() {
                 <CardContent>
                     {isLoading ? (
                         <div className="flex items-center justify-center h-40">
-                            <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#400041] border-t-transparent"></div>
+                            <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#400041] border-t-transparent" />
                         </div>
                     ) : recentEvents.length === 0 ? (
                         <div className="text-center py-8 text-muted-foreground">
@@ -132,8 +134,15 @@ export default function PainelPage() {
                     ) : (
                         <div className="space-y-4">
                             {recentEvents.slice(0, 5).map((event) => (
-                                <RecentEventCard key={event.id} id={event.id} date={event.date} ticketsSold={event.ticketsSold} status={event.status} title={event.title} totalRevenue={event.totalRevenue} />
-
+                                <RecentEventCard
+                                    key={event.id}
+                                    id={event.id}
+                                    date={event.date}
+                                    ticketsSold={event.ticketsSold}
+                                    status={event.status}
+                                    title={event.title}
+                                    totalRevenue={event.totalRevenue}
+                                />
                             ))}
                         </div>
                     )}
@@ -144,6 +153,6 @@ export default function PainelPage() {
                     </Link>
                 </CardFooter>
             </Card>
-        </div >
+        </div>
     )
 }
